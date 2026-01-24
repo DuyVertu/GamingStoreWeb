@@ -39,41 +39,6 @@ GamingGear Store là nền tảng thương mại điện tử chuyên cung cấp
 - Real-time price calculations
 - Form validation toàn bộ
 
-## 📦 Sản Phẩm
-
-### Gaming Categories
-
-#### 🖱️ Chuột Gaming
-
-- Logitech G Pro X Superlight 2 (60g wireless)
-- Finalmouse UltralightX (55g honeycomb)
-- Glorious Model O Wireless (69g)
-
-#### ⌨️ Bàn Phím
-
-- Wooting 60HE+ (Hall Effect Analog)
-- Keychron Q1 Pro (QMK/VIA)
-
-#### 🎧 Tai Nghe Gaming
-
-- SteelSeries Arctis Nova Pro (ANC)
-- HyperX Cloud III Wireless (120h battery)
-
-#### 🎵 IEM FPS
-
-- Moondrop Blessing 3 (4BA+1DD)
-- 7Hz Timeless AE (Planar magnetic)
-
-#### 🖥️ Màn Hình
-
-- ASUS ROG Swift OLED PG27AQDM (2K 240Hz)
-- LG UltraGear 27GR95QE (OLED)
-
-#### 🎮 Phụ Kiện
-
-- Artisan Hien Soft XL mousepad
-- Gaming cables, grips, etc.
-
 ## 🚀 Cài Đặt
 
 ### Prerequisites
@@ -276,30 +241,16 @@ GamingStoreWeb/
 - `POST /api/orders` - Create order
 - `GET /api/orders` - Get user orders
 
-## � Roadmap
-
-- [ ] User authentication flow
-- [ ] Admin dashboard
-- [ ] Order management
-- [ ] Payment gateway integration (Stripe)
-- [ ] Product reviews và ratings
-- [ ] Image upload cho products
-- [ ] Email notifications
-- [ ] Advanced search với autocomplete
-- [ ] Wishlist persistence with backend
-- [ ] Product comparison
-- [ ] Deploy to production
-
 ## 👨‍💻 Tác Giả
 
-**Đại Học - TLCN Project**
+**DuyVertu - TLCN Project**
 
 - Gaming Store for Pro Players
 - Full-stack E-commerce Platform
 
 ## 📄 License
 
-This project is for educational purposes.
+Dự án phục vụ học tập.
 
 ---
 
