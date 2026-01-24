@@ -1,0 +1,313 @@
+.cart-page {
+  padding: var(--spacing-2xl) 0;
+  min-height: 70vh;
+}
+
+.page-title {
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  margin-bottom: var(--spacing-2xl);
+}
+
+/* Empty Cart */
+.empty-cart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--spacing-3xl) var(--spacing-lg);
+}
+
+.empty-cart svg {
+  color: var(--color-gray-dark);
+  margin-bottom: var(--spacing-xl);
+  opacity: 0.3;
+}
+
+.empty-cart h2 {
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--spacing-md);
+}
+
+.empty-cart p {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-xl);
+}
+
+/* Cart Layout */
+.cart-layout {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: var(--spacing-2xl);
+  align-items: start;
+}
+
+/* Cart Items */
+.cart-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.cart-item {
+  display: grid;
+  grid-template-columns: 120px 1fr auto auto auto;
+  gap: var(--spacing-lg);
+  align-items: center;
+  padding: var(--spacing-lg);
+  background-color: var(--color-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-fast);
+}
+
+.cart-item:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.cart-item-image {
+  width: 120px;
+  height: 120px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--color-gray-light);
+}
+
+.cart-item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cart-item-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.cart-item-name {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.cart-item-name:hover {
+  opacity: 0.7;
+}
+
+.cart-item-brand {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.cart-item-discount {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-xs);
+}
+
+.cart-item-quantity {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background-color: var(--color-gray-light);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-xs);
+}
+
+.quantity-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--color-text-primary);
+  transition: background-color var(--transition-fast);
+}
+
+.quantity-btn:hover {
+  background-color: var(--color-gray-medium);
+}
+
+.quantity-value {
+  min-width: 40px;
+  text-align: center;
+  font-weight: 600;
+  font-size: var(--font-size-base);
+}
+
+.cart-item-price {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  min-width: 120px;
+  text-align: right;
+}
+
+.cart-item-remove {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  color: var(--color-gray-dark);
+  transition: all var(--transition-fast);
+}
+
+.cart-item-remove:hover {
+  background-color: rgba(255, 59, 59, 0.1);
+  color: var(--color-sale-red);
+}
+
+.btn-clear-cart {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-sale-red);
+  background: none;
+  border: none;
+  padding: var(--spacing-md);
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast);
+}
+
+.btn-clear-cart:hover {
+  background-color: rgba(255, 59, 59, 0.1);
+}
+
+/* Cart Summary */
+.cart-summary {
+  position: sticky;
+  top: 100px;
+  background-color: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-md);
+}
+
+.summary-title {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  margin-bottom: var(--spacing-lg);
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--spacing-md) 0;
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+}
+
+.summary-divider {
+  height: 1px;
+  background-color: var(--color-gray-medium);
+  margin: var(--spacing-md) 0;
+}
+
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--spacing-md) 0;
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+}
+
+.shipping-notice {
+  padding: var(--spacing-md);
+  background-color: var(--color-gray-light);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: var(--spacing-lg) 0;
+  text-align: center;
+}
+
+.checkout-btn {
+  width: 100%;
+  margin-top: var(--spacing-lg);
+}
+
+.continue-shopping {
+  display: block;
+  text-align: center;
+  margin-top: var(--spacing-md);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  transition: color var(--transition-fast);
+}
+
+.continue-shopping:hover {
+  color: var(--color-text-primary);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .cart-layout {
+    grid-template-columns: 1fr 350px;
+  }
+}
+
+@media (max-width: 768px) {
+  .cart-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .cart-summary {
+    position: static;
+  }
+  
+  .cart-item {
+    grid-template-columns: 80px 1fr auto;
+    gap: var(--spacing-md);
+  }
+  
+  .cart-item-image {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .cart-item-quantity {
+    grid-column: 2;
+  }
+  
+  .cart-item-price {
+    grid-column: 2;
+    text-align: left;
+    min-width: auto;
+  }
+  
+  .cart-item-remove {
+    grid-column: 3;
+    grid-row: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: var(--font-size-2xl);
+  }
+  
+  .cart-item {
+    padding: var(--spacing-md);
+  }
+  
+  .cart-item-name {
+    font-size: var(--font-size-base);
+  }
+  
+  .cart-item-price {
+    font-size: var(--font-size-lg);
+  }
+}

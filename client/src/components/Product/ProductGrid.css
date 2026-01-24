@@ -1,0 +1,108 @@
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-xl);
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-3xl) var(--spacing-lg);
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+.empty-state svg {
+  margin-bottom: var(--spacing-lg);
+  opacity: 0.3;
+}
+
+.empty-state h3 {
+  font-size: var(--font-size-xl);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.empty-state p {
+  font-size: var(--font-size-base);
+  margin-bottom: 0;
+}
+
+/* Loading Skeleton */
+.product-card-skeleton {
+  background-color: var(--color-gray-light);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.skeleton-image {
+  width: 100%;
+  aspect-ratio: 1;
+  background: linear-gradient(
+    90deg,
+    var(--color-gray-light) 0%,
+    var(--color-gray-medium) 50%,
+    var(--color-gray-light) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.skeleton-content {
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.skeleton-title,
+.skeleton-price,
+.skeleton-button {
+  height: 20px;
+  background: linear-gradient(
+    90deg,
+    var(--color-gray-light) 0%,
+    var(--color-gray-medium) 50%,
+    var(--color-gray-light) 100%
+  );
+  background-size: 200% 100%;
+  border-radius: var(--radius-sm);
+  animation: shimmer 1.5s infinite;
+}
+
+.skeleton-button {
+  height: 44px;
+  margin-top: var(--spacing-sm);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (max-width: 1200px) {
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: var(--spacing-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-sm);
+  }
+}

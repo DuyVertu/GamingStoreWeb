@@ -1,0 +1,14 @@
+{
+  "name": "estore-web",
+  "version": "1.0.0",
+  "description": "E-Store - Premium Electronics Web Application",
+  "scripts": {
+    "install-client": "cd client && npm install",
+    "dev": "cd client && npm run dev",
+    "build": "cd client && npm run build",
+    "preview": "cd client && npm run preview"
+  },
+  "keywords": ["ecommerce", "react", "vite", "electronics"],
+  "author": "",
+  "license": "MIT"
+}
