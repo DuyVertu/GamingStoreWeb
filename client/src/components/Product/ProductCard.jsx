@@ -29,22 +29,24 @@ function ProductCard({ product }) {
   
   return (
     <div className="product-card" onClick={handleCardClick}>
-      <div className="product-card-image-wrapper">
+      <div className="product-image-wrapper">
         <img 
           src={product.image} 
           alt={product.name}
-          className="product-card-image"
+          className="product-image"
         />
-        {hasDiscount && (
-          <span className="badge badge-sale product-badge">
-            Sale
-          </span>
-        )}
-        {product.isNew && (
-          <span className="badge badge-new product-badge">
-            New
-          </span>
-        )}
+        
+        {/* Badges */}
+        <div className="product-badges">
+          {hasDiscount && (
+            <span className="badge badge-sale">SALE</span>
+          )}
+          {product.isNew && (
+            <span className="badge badge-new">NEW</span>
+          )}
+        </div>
+        
+        {/* Wishlist Button */}
         <button 
           className={`wishlist-btn ${inWishlist ? 'active' : ''}`}
           onClick={handleWishlistToggle}
@@ -56,38 +58,53 @@ function ProductCard({ product }) {
         </button>
       </div>
       
-      <div className="product-card-content">
-        <h3 className="product-card-title">{product.name}</h3>
+      {/* Product Info */}
+      <div className="product-info">
+        {product.brand && (
+          <div className="product-brand">{product.brand}</div>
+        )}
         
-        <div className="product-card-rating">
+        <h3 className="product-name">{product.name}</h3>
+        
+        {/* Rating */}
+        <div className="product-rating">
           <div className="stars">
             {[...Array(5)].map((_, i) => (
               <svg 
                 key={i}
-                width="16" 
-                height="16" 
+                width="14" 
+                height="14" 
                 viewBox="0 0 24 24" 
-                fill={i < Math.floor(product.rating || 0) ? "var(--color-rating-gold)" : "none"}
-                stroke="var(--color-rating-gold)"
+                fill={i < Math.floor(product.rating || 0) ? "currentColor" : "none"}
+                stroke="currentColor"
                 strokeWidth="2"
               >
                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
               </svg>
             ))}
           </div>
-          <span className="rating-count">({product.reviewCount || 0})</span>
+          <span className="review-count">({product.reviewCount || 0})</span>
         </div>
         
-        <div className="product-card-price">
-          <span className="price">${displayPrice.toLocaleString()}</span>
+        {/* Price */}
+        <div className="product-price">
+          <span className="price-current">${displayPrice}</span>
           {hasDiscount && (
-            <span className="original-price">${product.price.toLocaleString()}</span>
+            <span className="price-original">${product.price}</span>
           )}
         </div>
         
-        <button className="btn btn-primary btn-buy" onClick={handleBuyNow}>
-          Buy Now
+        {/* Buy Button */}
+        <button className="buy-btn" onClick={handleBuyNow}>
+          BUY NOW
         </button>
+        
+        {/* Stock Badge */}
+        {product.stock < 10 && product.stock > 0 && (
+          <div className="stock-badge low-stock">
+            Only {product.stock} left!
+          </div>
+        )}
       </div>
     </div>
   )

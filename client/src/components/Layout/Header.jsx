@@ -23,13 +23,12 @@ function Header() {
     <header className="header">
       <div className="container">
         <div className="header-content">
-          {/* Logo */}
+          {/* Logo - Gaming */}
           <Link to="/" className="logo">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-              <rect width="32" height="32" rx="8" fill="currentColor"/>
-              <path d="M16 8L22 12V20L16 24L10 20V12L16 8Z" fill="white"/>
-            </svg>
-            <span className="logo-text">E-Store</span>
+            <span className="logo-icon">⚡</span>
+            <span className="logo-text">
+              GAMING<span className="logo-accent">GEAR</span>
+            </span>
           </Link>
           
           {/* Search Bar */}
@@ -37,7 +36,7 @@ function Header() {
             <input
               type="text"
               className="search-input"
-              placeholder="Tìm kiếm sản phẩm..."
+              placeholder="Tìm chuột, bàn phím, tai nghe..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />

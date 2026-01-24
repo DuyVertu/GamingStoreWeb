@@ -3,10 +3,11 @@
   top: 0;
   left: 0;
   right: 0;
-  background-color: var(--color-white);
-  border-bottom: 1px solid var(--color-gray-medium);
+  background-color: var(--color-bg-darker);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--color-border);
   z-index: var(--z-fixed);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 .header-content {
@@ -16,26 +17,41 @@
   padding: var(--spacing-md) 0;
 }
 
-/* Logo */
+/* Logo - Gaming Style */
 .logo {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
   font-size: var(--font-size-xl);
-  font-weight: 700;
-  color: var(--color-black);
+  font-weight: 800;
+  color: var(--color-text-primary);
   white-space: nowrap;
+  transition: all var(--transition-base);
 }
 
-.logo svg {
-  flex-shrink: 0;
+.logo-icon {
+  font-size: 1.8rem;
+  filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.5));
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.logo-text {
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.logo-accent {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .logo:hover {
-  opacity: 1;
+  transform: scale(1.05);
 }
 
-/* Search */
+/* Search - Gaming Style */
 .search-form {
   flex: 1;
   max-width: 600px;
@@ -47,16 +63,22 @@
   padding: var(--spacing-md) var(--spacing-lg);
   padding-right: 48px;
   font-size: var(--font-size-base);
-  border: 1px solid var(--color-gray-medium);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-full);
-  background-color: var(--color-gray-light);
+  background-color: var(--color-bg-card);
+  color: var(--color-text-primary);
   transition: all var(--transition-fast);
 }
 
+.search-input::placeholder {
+  color: var(--color-text-muted);
+}
+
 .search-input:focus {
-  background-color: var(--color-white);
-  border-color: var(--color-black);
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+  background-color: var(--color-bg-hover);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+  outline: none;
 }
 
 .search-btn {
@@ -69,16 +91,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--color-black);
-  color: var(--color-white);
+  background: var(--gradient-primary);
+  color: var(--color-bg-dark);
   border: none;
   border-radius: var(--radius-full);
   cursor: pointer;
-  transition: opacity var(--transition-fast);
+  transition: all var(--transition-base);
 }
 
 .search-btn:hover {
-  opacity: 0.8;
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+  transform: translateY(-50%) scale(1.1);
 }
 
 /* Actions */
@@ -89,15 +112,18 @@
 }
 
 .header-link {
-  font-weight: 500;
+  font-weight: 600;
   padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--radius-md);
-  transition: background-color var(--transition-fast);
+  transition: all var(--transition-fast);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: var(--font-size-sm);
 }
 
 .header-link:hover {
-  background-color: var(--color-gray-light);
-  opacity: 1;
+  background-color: var(--color-bg-hover);
+  color: var(--color-primary);
 }
 
 .icon-btn {
@@ -112,11 +138,12 @@
   border-radius: var(--radius-md);
   cursor: pointer;
   color: var(--color-text-primary);
-  transition: background-color var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
 .icon-btn:hover {
-  background-color: var(--color-gray-light);
+  background-color: var(--color-bg-hover);
+  color: var(--color-primary);
 }
 
 .cart-btn {
@@ -135,9 +162,10 @@
   padding: 2px 4px;
   font-size: 11px;
   font-weight: 700;
-  color: var(--color-white);
-  background-color: var(--color-sale-red);
+  color: var(--color-bg-dark);
+  background: var(--gradient-secondary);
   border-radius: var(--radius-full);
+  box-shadow: 0 0 10px rgba(255, 0, 85, 0.5);
 }
 
 .user-menu {
@@ -153,7 +181,7 @@
   }
   
   .logo-text {
-    display: none;
+    font-size: var(--font-size-base);
   }
   
   .search-form {
@@ -166,6 +194,14 @@
 }
 
 @media (max-width: 480px) {
+  .logo-icon {
+    font-size: 1.5rem;
+  }
+  
+  .logo-text {
+    font-size: var(--font-size-sm);
+  }
+  
   .search-input {
     font-size: var(--font-size-sm);
     padding: var(--spacing-sm) var(--spacing-md);

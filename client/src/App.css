@@ -1,10 +1,18 @@
-.app {
+/* Main App Styles */
+#root {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: var(--color-bg-dark);
 }
 
-.main-content {
+/* Add spacing for fixed header */
+body {
+  padding-top: 72px;
+}
+
+/* Main content area */
+main {
   flex: 1;
-  padding-top: 80px; /* Height of fixed header */
+  width: 100%;
 }
