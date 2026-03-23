@@ -186,4 +186,4 @@ GamingStoreWeb/
 
 ---
 
-**DuyVertu - TLCN Project** ⚡🎮
+**DuyVertu - TLCN Project**
