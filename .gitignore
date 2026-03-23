@@ -47,3 +47,6 @@ public/uploads/
 
 # MongoDB
 data/
+
+# Docs
+docs/
