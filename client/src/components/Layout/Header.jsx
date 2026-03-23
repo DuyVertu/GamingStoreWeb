@@ -74,6 +74,11 @@ function Header() {
             <div className="user-menu">
               {user ? (
                 <>
+                  {user.role === 'owner' && (
+                    <Link to="/owner/dashboard" className="header-link" style={{ color: 'var(--color-accent)' }}>
+                      👑 Quản lý
+                    </Link>
+                  )}
                   <button className="icon-btn">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <circle cx="12" cy="8" r="5" strokeWidth="2"/>
@@ -85,9 +90,9 @@ function Header() {
                   </button>
                 </>
               ) : (
-                <button className="btn btn-primary btn-sm">
+                <Link to="/login" className="btn btn-primary btn-sm">
                   Đăng nhập
-                </button>
+                </Link>
               )}
             </div>
           </div>
