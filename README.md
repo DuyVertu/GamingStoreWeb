@@ -9,249 +9,181 @@ Premium Gaming Peripherals Store cho Pro Players. Full-stack E-commerce website 
 
 ## 🎯 Giới Thiệu
 
-GamingGear Store là nền tảng thương mại điện tử chuyên cung cấp thiết bị gaming cao cấp cho game thủ chuyên nghiệp và đam mê esports. Website được thiết kế với giao diện gaming cyber đậm chất, tối ưu để mang đến trải nghiệm mua sắm tốt nhất.
+GamingGear Store là nền tảng thương mại điện tử chuyên cung cấp thiết bị gaming cao cấp cho game thủ chuyên nghiệp và đam mê esports. Website được thiết kế với giao diện gaming cyber đậm chất, hỗ trợ 2 vai trò người dùng: **Khách hàng (User)** và **Chủ cửa hàng (Owner)**.
 
-## ✨ Tính Năng
+## ✨ Tính Năng Hệ Thống
 
-### 🛍️ Người Dùng
+### 🔐 Xác Thực & Phân Quyền
 
-- ✅ Duyệt sản phẩm gaming theo danh mục
-- ✅ Tìm kiếm và lọc sản phẩm (brand, price, category)
-- ✅ Xem chi tiết sản phẩm với specifications đầy đủ
-- ✅ Thêm vào giỏ hàng và wishlist
-- ✅ Điều chỉnh số lượng trong giỏ hàng
-- ✅ Thanh toán 3 bước: Shipping → Payment → Review
-- ✅ Responsive design (mobile, tablet, desktop)
+- Đăng ký / Đăng nhập / Quên mật khẩu
+- Phân quyền theo role: **User** và **Owner**
+- Route protection — Owner mới truy cập được trang quản lý
+- Tự động redirect theo role sau đăng nhập
 
-### 🎨 Giao Diện Gaming
+### 🛍️ Người Dùng (User)
 
-- Dark theme với neon accents (Green, Pink, Blue)
-- Cyber effects với gradient và glow
-- Smooth animations và hover effects
-- Custom scrollbar với gaming colors
-- Product cards với neon border glow
+- Duyệt sản phẩm theo 6 danh mục: Chuột Gaming, Bàn Phím, Tai Nghe, IEM FPS, Màn Hình, Phụ Kiện
+- Tìm kiếm và lọc sản phẩm (thương hiệu, giá, danh mục)
+- Xem chi tiết sản phẩm với thông số kỹ thuật đầy đủ
+- Giỏ hàng: thêm, điều chỉnh số lượng, xóa
+- Wishlist sản phẩm yêu thích
+- Thanh toán 3 bước: Shipping → Payment → Review
 
-### 🛠️ Kỹ Thuật
+### 👑 Chủ Cửa Hàng (Owner)
 
-- State management với Zustand + localStorage
-- React Router v6 cho navigation
-- Axios cho API calls
-- Real-time price calculations
-- Form validation toàn bộ
+- **Dashboard**: Tổng quan thống kê (sản phẩm, khách hàng, đơn hàng, doanh thu), hoạt động gần đây, sản phẩm bán chạy
+- **Quản lý Gear**: Thêm / sửa / xóa sản phẩm, tìm kiếm, hiển thị bảng với giá, tồn kho, đánh giá
+- **Quản lý Khách hàng**: Danh sách khách hàng, tìm kiếm, xem chi tiết, xóa tài khoản
 
-## 🚀 Cài Đặt
+### 🎨 Giao Diện
 
-### Prerequisites
-
-- Node.js v16+
-- MongoDB Community Server hoặc MongoDB Atlas
-- Git
-
-### 1. Clone Repository
-
-```bash
-git clone https://github.com/DuyVertu/GamingStoreWeb.git
-cd GamingStoreWeb
-```
-
-### 2. Cài Đặt Frontend
-
-```bash
-cd client
-npm install
-```
-
-### 3. Cài Đặt Backend
-
-```bash
-cd ../server
-npm install
-```
-
-### 4. Cấu Hình MongoDB
-
-**Option 1: MongoDB Local**
-
-1. Download: https://www.mongodb.com/try/download/community
-2. Install với default settings
-3. MongoDB sẽ chạy tại `mongodb://localhost:27017`
-
-**Option 2: MongoDB Atlas (Cloud)**
-
-1. Tạo account tại: https://www.mongodb.com/cloud/atlas
-2. Tạo cluster miễn phí
-3. Lấy connection string
-
-### 5. Tạo File Environment
-
-```bash
-# Trong thư mục server/
-copy .env.example .env
-```
-
-Sửa file `.env`:
-
-```env
-PORT=5000
-NODE_ENV=development
-
-# Local MongoDB
-MONGODB_URI=mongodb://localhost:27017/estore
-
-# Hoặc MongoDB Atlas
-# MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/estore
-
-JWT_SECRET=your_secret_key_here
-JWT_EXPIRE=7d
-```
-
-### 6. Seed Database
-
-```bash
-# Trong thư mục server/
-npm run seed
-```
-
-### 7. Chạy Ứng Dụng
-
-**Terminal 1 - Backend:**
-
-```bash
-cd server
-npm run dev
-# Server: http://localhost:5000
-```
-
-**Terminal 2 - Frontend:**
-
-```bash
-cd client
-npm run dev
-# App: http://localhost:5173
-```
+- Dark theme với neon accents (Green, Pink, Blue, Purple)
+- Cyber gradient và glow effects
+- Smooth animations, hover effects, micro-interactions
+- Custom scrollbar gaming style
+- Responsive design (mobile, tablet, desktop)
 
 ## 🎨 Tech Stack
 
 ### Frontend
 
-- **Framework:** React 18.2
-- **Build Tool:** Vite
-- **Routing:** React Router DOM v6
-- **State Management:** Zustand
-- **HTTP Client:** Axios
-- **Styling:** CSS với CSS Variables
+| Công nghệ | Mục đích |
+|-----------|----------|
+| React 18.2 | UI Framework |
+| Vite 5.1 | Build Tool |
+| React Router DOM v6 | Routing & Navigation |
+| Zustand | State Management |
+| Axios | HTTP Client |
+| CSS Variables | Design System |
 
 ### Backend
 
-- **Runtime:** Node.js v20+
-- **Framework:** Express
-- **Database:** MongoDB với Mongoose
-- **Authentication:** JWT (JSON Web Tokens)
-- **Security:** bcryptjs for password hashing
-- **Environment:** dotenv
+| Công nghệ | Mục đích |
+|-----------|----------|
+| Node.js + Express | Web Server & API |
+| MongoDB + Mongoose | Database & ODM |
+| JWT | Authentication |
+| bcryptjs | Password Hashing |
 
 ## 📁 Cấu Trúc Project
 
 ```
 GamingStoreWeb/
-├── client/                 # Frontend React
+├── client/                         # Frontend React
 │   ├── src/
-│   │   ├── components/    # Reusable components
-│   │   │   ├── Layout/   # Header, Footer
-│   │   │   ├── Product/  # ProductCard, ProductGrid
-│   │   │   └── Checkout/ # ProgressIndicator
-│   │   ├── pages/        # Page components
-│   │   │   ├── Home.jsx
-│   │   │   ├── Products.jsx
-│   │   │   ├── ProductDetails.jsx
-│   │   │   ├── Cart.jsx
-│   │   │   └── Checkout.jsx
-│   │   ├── store/        # Zustand stores
-│   │   ├── services/     # API services
-│   │   ├── data/         # Mock data & products
-│   │   └── index.css     # Gaming design system
+│   │   ├── components/
+│   │   │   ├── Layout/            # Header, Footer
+│   │   │   ├── Product/           # ProductCard
+│   │   │   ├── Checkout/          # ProgressIndicator
+│   │   │   ├── Owner/             # OwnerLayout (sidebar navigation)
+│   │   │   └── PrivateRoute.jsx   # Route guard theo role
+│   │   ├── pages/
+│   │   │   ├── Home.jsx           # Trang chủ
+│   │   │   ├── Products.jsx       # Danh sách sản phẩm
+│   │   │   ├── ProductDetails.jsx # Chi tiết sản phẩm
+│   │   │   ├── Cart.jsx           # Giỏ hàng
+│   │   │   ├── Checkout.jsx       # Thanh toán
+│   │   │   ├── Login.jsx          # Đăng nhập
+│   │   │   ├── Register.jsx       # Đăng ký
+│   │   │   ├── ForgotPassword.jsx # Quên mật khẩu
+│   │   │   └── Owner/
+│   │   │       ├── Dashboard.jsx      # Tổng quan cửa hàng
+│   │   │       ├── ManageGear.jsx     # CRUD sản phẩm
+│   │   │       └── ManageCustomers.jsx # Quản lý khách hàng
+│   │   ├── store/                 # Zustand state management
+│   │   │   ├── useAuthStore.js    # Trạng thái xác thực
+│   │   │   ├── useCartStore.js    # Giỏ hàng
+│   │   │   └── useWishlistStore.js # Wishlist
+│   │   ├── services/              # API services (Axios)
+│   │   └── data/                  # Mock data
 │   └── package.json
 │
-├── server/                # Backend Node.js
-│   ├── config/           # Database config
-│   ├── models/           # Mongoose models
-│   │   ├── Product.js
-│   │   └── User.js
-│   ├── routes/           # API routes
-│   │   ├── products.js
-│   │   ├── auth.js
-│   │   ├── cart.js
-│   │   └── orders.js
-│   ├── seeds/            # Database seeding
-│   ├── server.js         # Main server file
-│   └── package.json
+├── server/                        # Backend Node.js
+│   ├── config/                    # Cấu hình database
+│   ├── models/
+│   │   ├── Product.js             # Schema sản phẩm
+│   │   └── User.js               # Schema người dùng
+│   ├── routes/
+│   │   ├── auth.js                # Đăng ký, đăng nhập
+│   │   ├── products.js            # CRUD sản phẩm
+│   │   ├── cart.js                # Giỏ hàng
+│   │   └── orders.js             # Đơn hàng
+│   ├── seeds/                     # Dữ liệu mẫu
+│   └── server.js                  # Entry point
 │
 └── README.md
 ```
+
+## 🗺️ Sơ Đồ Routes
+
+### Public Routes
+
+| Route | Mô tả |
+|-------|--------|
+| `/` | Trang chủ — banner, sản phẩm nổi bật |
+| `/products` | Danh sách sản phẩm — filter, search |
+| `/products/:id` | Chi tiết sản phẩm |
+| `/cart` | Giỏ hàng |
+| `/checkout` | Thanh toán |
+| `/login` | Đăng nhập |
+| `/register` | Đăng ký |
+| `/forgot-password` | Quên mật khẩu |
+
+### Owner Routes (yêu cầu role Owner)
+
+| Route | Mô tả |
+|-------|--------|
+| `/owner/dashboard` | Tổng quan cửa hàng |
+| `/owner/gear` | Quản lý sản phẩm (CRUD) |
+| `/owner/customers` | Quản lý khách hàng |
+
+## 📝 API Endpoints
+
+### Authentication
+
+| Method | Endpoint | Mô tả |
+|--------|----------|--------|
+| POST | `/api/auth/register` | Đăng ký tài khoản |
+| POST | `/api/auth/login` | Đăng nhập |
+| GET | `/api/auth/me` | Lấy thông tin user hiện tại |
+
+### Products
+
+| Method | Endpoint | Mô tả |
+|--------|----------|--------|
+| GET | `/api/products` | Danh sách sản phẩm (có filter) |
+| GET | `/api/products/:id` | Chi tiết sản phẩm |
+| POST | `/api/products` | Thêm sản phẩm (Owner) |
+| PUT | `/api/products/:id` | Cập nhật sản phẩm (Owner) |
+| DELETE | `/api/products/:id` | Xóa sản phẩm (Owner) |
+
+### Cart & Orders
+
+| Method | Endpoint | Mô tả |
+|--------|----------|--------|
+| GET | `/api/cart` | Lấy giỏ hàng |
+| POST | `/api/cart/add` | Thêm vào giỏ |
+| POST | `/api/orders` | Tạo đơn hàng |
+| GET | `/api/orders` | Danh sách đơn hàng |
 
 ## 🎨 Design System
 
 ### Gaming Color Palette
 
 ```css
---color-bg-dark: #0a0e27; /* Dark background */
---color-bg-darker: #050714; /* Darker background */
---color-bg-card: #12162e; /* Card background */
-
---color-primary: #00ff88; /* Neon Green */
---color-secondary: #ff0055; /* Hot Pink */
---color-tertiary: #00d9ff; /* Cyber Blue */
---color-accent: #b537f2; /* Purple */
+--color-bg-dark: #0a0e27;    /* Dark background */
+--color-bg-card: #12162e;     /* Card background */
+--color-primary: #00ff88;     /* Neon Green */
+--color-secondary: #ff0055;   /* Hot Pink */
+--color-tertiary: #00d9ff;    /* Cyber Blue */
+--color-accent: #b537f2;      /* Purple */
 ```
 
 ### Typography
 
-- **Font Family:** Inter (Google Fonts)
-- **Headings:** Uppercase, letter-spacing: 2px
-- **Weights:** 300-900
-
-### Effects
-
-- Glow effects với box-shadow
-- Smooth transitions (150-350ms)
-- Hover animations
-- Gradient backgrounds
-- Custom scrollbar
-
-## 📝 API Endpoints
-
-### Products
-
-- `GET /api/products` - Get all products (with filters)
-- `GET /api/products/:id` - Get product details
-- `POST /api/products` - Create product (Admin)
-- `PUT /api/products/:id` - Update product (Admin)
-- `DELETE /api/products/:id` - Delete product (Admin)
-
-### Authentication
-
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login user
-- `GET /api/auth/me` - Get current user
-
-### Cart & Orders
-
-- `GET /api/cart` - Get cart
-- `POST /api/cart/add` - Add to cart
-- `POST /api/orders` - Create order
-- `GET /api/orders` - Get user orders
-
-## 👨‍💻 Tác Giả
-
-**DuyVertu - TLCN Project**
-
-- Gaming Store for Pro Players
-- Full-stack E-commerce Platform
-
-## 📄 License
-
-Dự án phục vụ học tập.
+- **Font:** Inter (Google Fonts)
+- **Headings:** Uppercase, letter-spacing, font-weight 700-800
 
 ---
 
-⚡ **Made with passion for gaming!** 🎮
+**DuyVertu - TLCN Project** ⚡🎮
