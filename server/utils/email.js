@@ -3,19 +3,10 @@ import nodemailer from 'nodemailer';
 export const sendEmail = async ({ to, subject, text }) => {
   let transporter;
 
-  // Tự động dùng Ethereal (thư gửi nháp) nếu người dùng chưa điền pass
   if (!process.env.EMAIL_PASS || process.env.EMAIL_PASS === 'your-google-app-password') {
-    const testAccount = await nodemailer.createTestAccount();
-    transporter = nodemailer.createTransport({
-      host: "smtp.ethereal.email",
-      port: 587,
-      secure: false, // true for 465, false for other ports
-      auth: {
-        user: testAccount.user, // generated ethereal user
-        pass: testAccount.pass, // generated ethereal password
-      },
-    });
-    console.log(`⚠️ Đang dùng Ethereal Test Account: ${testAccount.user}`);
+    console.log(`⚠️ Email credentials not provided. Bypassing email sending to prevent timeout on Render.`);
+    // Return early, mock sending
+    return { messageId: 'mock-id-' + Date.now() };
   } else {
     // Dùng Gmail thật khi có thông tin
     transporter = nodemailer.createTransport({
