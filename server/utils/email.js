@@ -3,8 +3,13 @@ import nodemailer from 'nodemailer';
 export const sendEmail = async ({ to, subject, text }) => {
   let transporter;
 
+  if (process.env.RENDER) {
+    console.log(`⚠️ Blocked by Render SMTP firewall. Bypassing email.`);
+    return { messageId: 'bypassed-by-render' };
+  }
+
   if (!process.env.EMAIL_PASS || process.env.EMAIL_PASS === 'your-google-app-password') {
-    console.log(`⚠️ Email credentials not provided. Bypassing email sending to prevent timeout on Render.`);
+    console.log(`⚠️ Email credentials not provided. Bypassing email sending to prevent timeout.`);
     // Return early, mock sending
     return { messageId: 'mock-id-' + Date.now() };
   } else {

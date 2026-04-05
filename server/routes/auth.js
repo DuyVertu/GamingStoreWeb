@@ -29,7 +29,7 @@ router.post('/register', async (req, res) => {
     }
     
     const isEmailConfigured = process.env.EMAIL_PASS && process.env.EMAIL_PASS !== 'your-google-app-password';
-    const otp = isEmailConfigured ? generateOTP() : '123456';
+    const otp = (isEmailConfigured && !process.env.RENDER) ? generateOTP() : '123456';
     user.verificationCode = otp;
     user.verificationCodeExpires = Date.now() + 10 * 60 * 1000; // 10 mins
     await user.save();
