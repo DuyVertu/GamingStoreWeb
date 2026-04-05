@@ -22,7 +22,7 @@ const productSchema = new mongoose.Schema({
   category: {
     type: String,
     required: [true, 'Product category is required'],
-    enum: ['phones', 'watches', 'cameras', 'headphones', 'gaming', 'computers']
+    enum: ['gaming-mice', 'keyboards', 'headsets', 'iems', 'monitors', 'accessories']
   },
   brand: {
     type: String,

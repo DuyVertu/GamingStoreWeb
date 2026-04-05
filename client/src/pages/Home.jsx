@@ -1,16 +1,45 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import ProductGrid from '../components/Product/ProductGrid'
-import { mockProducts, categories } from '../data/products'
+import { categories } from '../data/products'
+import api from '../services/api'
 import './Home.css'
 
 function Home() {
-  const featuredProducts = mockProducts.filter(p => p.rating >= 4.8).slice(0, 8)
-  const saleProducts = mockProducts.filter(p => p.salePrice)
-  const newProducts = mockProducts.filter(p => p.isNew)
-  
+  const [featuredProducts, setFeaturedProducts] = useState([])
+  const [saleProducts, setSaleProducts] = useState([])
+  const [newProducts, setNewProducts] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchAll = async () => {
+      try {
+        setIsLoading(true)
+        // Gọi cả 3 API song song để tối ưu tốc độ
+        const [allRes, saleRes, newRes] = await Promise.all([
+          api.get('/products'),
+          api.get('/products?sale=true'),
+          api.get('/products?isNew=true'),
+        ])
+
+        // Sắp xếp theo rating cao nhất, lấy tối đa 8 sản phẩm nổi bật
+        const sorted = [...allRes.data.data].sort((a, b) => (b.rating || 0) - (a.rating || 0))
+        setFeaturedProducts(sorted.slice(0, 8))
+        setSaleProducts(saleRes.data.data)
+        setNewProducts(newRes.data.data)
+      } catch (error) {
+        console.error('Lỗi tải sản phẩm trang chủ:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchAll()
+  }, [])
+
   return (
     <div className="home">
-      {/* Hero  Banner - Gaming Style */}
+      {/* Hero Banner - Gaming Style */}
       <section className="hero">
         <div className="container">
           <div className="hero-content">
@@ -31,14 +60,14 @@ function Home() {
           </div>
         </div>
       </section>
-      
+
       {/* Categories - Gaming */}
       <section className="section">
         <div className="container">
           <h2 className="section-title">GAMING CATEGORIES</h2>
           <div className="categories-grid">
             {categories.map(category => (
-              <Link 
+              <Link
                 key={category.id}
                 to={`/products?category=${category.id}`}
                 className="category-card"
@@ -50,7 +79,7 @@ function Home() {
           </div>
         </div>
       </section>
-      
+
       {/* Featured Products */}
       <section className="section">
         <div className="container">
@@ -62,12 +91,25 @@ function Home() {
               Xem tất cả →
             </Link>
           </div>
-          <ProductGrid products={featuredProducts} />
+          {isLoading ? (
+            <div style={{ textAlign: 'center', padding: '40px', color: '#888' }}>
+              ⏳ Đang tải sản phẩm...
+            </div>
+          ) : featuredProducts.length > 0 ? (
+            <ProductGrid products={featuredProducts} />
+          ) : (
+            <div style={{ textAlign: 'center', padding: '40px', color: '#888' }}>
+              <p>📦 Chưa có sản phẩm nào. Admin hãy thêm sản phẩm từ Dashboard!</p>
+              <Link to="/owner/gear" className="btn btn-primary" style={{ marginTop: '12px', display: 'inline-block' }}>
+                ➕ Thêm sản phẩm
+              </Link>
+            </div>
+          )}
         </div>
       </section>
-      
+
       {/* Sale Products */}
-      {saleProducts.length > 0 && (
+      {!isLoading && saleProducts.length > 0 && (
         <section className="section section-sale">
           <div className="container">
             <div className="section-header">
@@ -82,9 +124,9 @@ function Home() {
           </div>
         </section>
       )}
-      
+
       {/* New Arrivals */}
-      {newProducts.length > 0 && (
+      {!isLoading && newProducts.length > 0 && (
         <section className="section">
           <div className="container">
             <div className="section-header">
@@ -99,7 +141,7 @@ function Home() {
           </div>
         </section>
       )}
-      
+
       {/* Features */}
       <section className="section">
         <div className="container">
@@ -109,19 +151,16 @@ function Home() {
               <h3 className="feature-title">SHIP TOÀN QUỐC</h3>
               <p className="feature-text">Miễn phí ship đơn trên 500K</p>
             </div>
-            
             <div className="feature-card">
               <div className="feature-icon">✅</div>
               <h3 className="feature-title">100% CHÍNH HÃNG</h3>
               <p className="feature-text">Bảo hành chính hãng toàn cầu</p>
             </div>
-            
             <div className="feature-card">
               <div className="feature-icon">💳</div>
               <h3 className="feature-title">THANH TOÁN AN TOÀN</h3>
               <p className="feature-text">Nhiều phương thức thanh toán</p>
             </div>
-            
             <div className="feature-card">
               <div className="feature-icon">🎧</div>
               <h3 className="feature-title">HỖ TRỢ 24/7</h3>

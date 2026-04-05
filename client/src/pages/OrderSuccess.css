@@ -1,0 +1,205 @@
+/* ================================
+   Order Success Page
+   ================================ */
+.order-success-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: radial-gradient(ellipse at 50% 0%, rgba(0, 212, 170, 0.08) 0%, transparent 60%);
+}
+
+.order-success-card {
+  background: linear-gradient(160deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+  border: 1px solid rgba(0, 212, 170, 0.25);
+  border-radius: 28px;
+  padding: 3rem 2.5rem;
+  max-width: 520px;
+  width: 100%;
+  text-align: center;
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.5),
+    0 0 60px rgba(0, 212, 170, 0.08);
+  animation: cardSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes cardSlideIn {
+  from { opacity: 0; transform: translateY(40px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ---- Animated SVG Checkmark ---- */
+.order-success-icon {
+  width: 90px;
+  height: 90px;
+  margin: 0 auto 1.5rem;
+}
+
+.checkmark-svg {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.checkmark-circle {
+  stroke: #00d4aa;
+  stroke-width: 2;
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  animation: strokeCircle 0.6s cubic-bezier(0.65, 0, 0.45, 1) 0.1s forwards;
+}
+
+.checkmark-check {
+  stroke: #00d4aa;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: strokeCheck 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.7s forwards;
+}
+
+@keyframes strokeCircle {
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes strokeCheck {
+  100% { stroke-dashoffset: 0; }
+}
+
+/* ---- Headings ---- */
+.order-success-card h2 {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 0.5rem;
+  letter-spacing: -0.5px;
+}
+
+.order-success-subtitle {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.95rem;
+  margin-bottom: 1.8rem;
+}
+
+.order-success-subtitle strong {
+  color: #00d4aa;
+}
+
+/* ---- Details box ---- */
+.order-success-details {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.order-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.order-detail-row:last-child {
+  border-bottom: none;
+}
+
+.order-id {
+  color: #ffffff;
+  font-family: monospace;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+}
+
+.order-total {
+  color: #00d4aa !important;
+  font-size: 1.05rem !important;
+}
+
+.order-status-badge {
+  background: rgba(0, 212, 170, 0.12);
+  color: #00d4aa;
+  padding: 0.2rem 0.7rem;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.order-paid-badge {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.88rem;
+}
+
+/* ---- Countdown bar ---- */
+.countdown-bar-wrapper {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  margin-bottom: 0.6rem;
+  overflow: hidden;
+}
+
+.countdown-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #00d4aa, #00a8ff);
+  border-radius: 2px;
+  transition: width 1s linear;
+}
+
+.countdown-text {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 1.8rem;
+}
+
+.countdown-text strong {
+  color: #00d4aa;
+  font-weight: 700;
+}
+
+/* ---- Action buttons ---- */
+.order-success-actions {
+  display: flex;
+  gap: 0.9rem;
+}
+
+.order-success-actions .btn {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-size: 0.9rem;
+  border: none;
+}
+
+.order-success-actions .btn-outline {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.order-success-actions .btn-outline:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #fff;
+}
+
+.order-success-actions .btn-primary {
+  background: linear-gradient(135deg, #00d4aa 0%, #00a8ff 100%);
+  color: #0a0a1a;
+  font-weight: 700;
+}
+
+.order-success-actions .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0, 212, 170, 0.4);
+}

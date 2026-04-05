@@ -2,11 +2,13 @@ import { Routes, Route, useLocation } from 'react-router-dom'
 import Header from './components/Layout/Header'
 import Footer from './components/Layout/Footer'
 import PrivateRoute from './components/PrivateRoute'
+import ScrollToTop from './components/ScrollToTop'
 import Home from './pages/Home'
 import Products from './pages/Products'
 import ProductDetails from './pages/ProductDetails'
 import Cart from './pages/Cart'
 import Checkout from './pages/Checkout'
+import OrderSuccess from './pages/OrderSuccess'
 import Login from './pages/Login'
 import ForgotPassword from './pages/ForgotPassword'
 import Register from './pages/Register'
@@ -23,6 +25,7 @@ function App() {
 
   return (
     <div className="app">
+      <ScrollToTop />
       {/* Hide header/footer on owner and auth pages */}
       {!isOwnerRoute && !isAuthRoute && <Header />}
       <main className={!isOwnerRoute && !isAuthRoute ? 'main-content' : ''}>
@@ -36,6 +39,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/order-success" element={<OrderSuccess />} />
 
           {/* Owner routes - protected */}
           <Route

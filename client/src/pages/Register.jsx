@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useAuthStore } from '../store/useAuthStore'
+import api from '../services/api'
 import './Register.css'
 
 function Register() {
@@ -11,10 +11,14 @@ function Register() {
     password: '',
     confirmPassword: '',
   })
+  
+  const [isOtpMode, setIsOtpMode] = useState(false)
+  const [otpCode, setOtpCode] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  
   const navigate = useNavigate()
-  const { login } = useAuthStore()
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -30,7 +34,7 @@ function Register() {
 
   const strength = getPasswordStrength(formData.password)
 
-  const handleSubmit = (e) => {
+  const handleRegisterSubmit = async (e) => {
     e.preventDefault()
     setError('')
 
@@ -50,23 +54,50 @@ function Register() {
       return
     }
 
-    // Mock register - create user and auto login
-    const newUser = {
-      id: String(Date.now()),
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      role: 'user',
-      createdAt: new Date().toISOString(),
+    setIsLoading(true)
+    try {
+      // Call real backend API
+      const response = await api.post('/auth/register', {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password
+      })
+      
+      // If server successfully sent OTP
+      setIsOtpMode(true)
+      setError('')
+    } catch (err) {
+      setError(err.response?.data?.message || 'Lỗi kết nối đến máy chủ. Vui lòng thử lại.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleOtpSubmit = async (e) => {
+    e.preventDefault()
+    setError('')
+
+    if (!otpCode || otpCode.length < 6) {
+      setError('Vui lòng nhập đầy đủ 6 số OTP')
+      return
     }
 
-    login(newUser, `mock-token-${newUser.id}`)
-    setSuccess(true)
-
-    // Redirect to home after short delay
-    setTimeout(() => {
-      navigate('/')
-    }, 1500)
+    setIsLoading(true)
+    try {
+      await api.post('/auth/verify-email', {
+        email: formData.email,
+        code: otpCode
+      })
+      
+      setSuccess(true)
+      setTimeout(() => {
+        navigate('/login')
+      }, 1500)
+    } catch (err) {
+      setError(err.response?.data?.message || 'Mã OTP không hợp lệ, hoặc đã hết hạn.')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -78,18 +109,52 @@ function Register() {
               <span className="logo-icon">⚡</span>
               GAMING<span className="logo-accent">GEAR</span>
             </Link>
-            <p className="register-subtitle">Tạo tài khoản mới để mua sắm</p>
+            <p className="register-subtitle">
+              {isOtpMode ? 'Xác thực tài khoản' : 'Tạo tài khoản mới để mua sắm'}
+            </p>
           </div>
 
           {success ? (
             <div className="forgot-success">
               <div className="forgot-success-icon">🎉</div>
               <p>
-                Đăng ký thành công! Đang chuyển hướng...
+                Xác thực thành công! Đang chuyển đến trang đăng nhập...
               </p>
             </div>
+          ) : isOtpMode ? (
+            // Form Nhập OTP
+            <form className="register-form" onSubmit={handleOtpSubmit}>
+              <div className="form-group" style={{textAlign: 'center'}}>
+                <label className="form-label" style={{fontSize: '15px', marginBottom: '15px'}}>
+                  Vui lòng kiểm tra hộp thư email <b>{formData.email}</b> và nhập mã 6 số OTP
+                </label>
+                <input
+                  type="text"
+                  className="form-input"
+                  style={{textAlign: 'center', fontSize: '24px', letterSpacing: '5px'}}
+                  maxLength={6}
+                  placeholder="******"
+                  value={otpCode}
+                  onChange={(e) => {
+                    setOtpCode(e.target.value.replace(/[^0-9]/g, ''))
+                    setError('')
+                  }}
+                />
+              </div>
+              
+              {error && (
+                <div className="form-error">
+                  <span>⚠</span> {error}
+                </div>
+              )}
+
+              <button type="submit" className="btn btn-primary register-btn" disabled={isLoading}>
+                {isLoading ? 'Đang xử lý...' : 'Xác Nhận OTP'}
+              </button>
+            </form>
           ) : (
-            <form className="register-form" onSubmit={handleSubmit}>
+            // Form Đăng ký thông thường
+            <form className="register-form" onSubmit={handleRegisterSubmit}>
               <div className="form-group">
                 <label className="form-label">Họ và tên *</label>
                 <input
@@ -172,8 +237,8 @@ function Register() {
                 </div>
               )}
 
-              <button type="submit" className="btn btn-primary register-btn">
-                Đăng ký
+              <button type="submit" className="btn btn-primary register-btn" disabled={isLoading}>
+                {isLoading ? 'Đang gửi...' : 'Đăng ký'}
               </button>
             </form>
           )}

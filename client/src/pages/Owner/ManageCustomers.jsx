@@ -1,34 +1,82 @@
-import { useState } from 'react'
-import { mockCustomers } from '../../data/mockUsers'
+import { useState, useEffect } from 'react'
+import api from '../../services/api'
+import { formatVND } from '../../utils/format'
 import './ManageCustomers.css'
 
 function ManageCustomers() {
-  const [customers, setCustomers] = useState([...mockCustomers])
+  const [customers, setCustomers] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [search, setSearch] = useState('')
   const [selectedCustomer, setSelectedCustomer] = useState(null)
+  const [confirmDelete, setConfirmDelete] = useState(null)
+
+  // Fetch danh sách user từ API
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        setIsLoading(true)
+        const res = await api.get('/users')
+        setCustomers(res.data.data || [])
+      } catch (err) {
+        setError(err.response?.data?.message || 'Lỗi tải danh sách khách hàng')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchCustomers()
+  }, [])
 
   const filteredCustomers = customers.filter(
     (c) =>
-      c.name.toLowerCase().includes(search.toLowerCase()) ||
-      c.email.toLowerCase().includes(search.toLowerCase())
+      (c.fullName || c.name || '').toLowerCase().includes(search.toLowerCase()) ||
+      (c.email || '').toLowerCase().includes(search.toLowerCase())
   )
 
-  const totalOrders = customers.reduce((sum, c) => sum + c.totalOrders, 0)
-  const totalRevenue = customers.reduce((sum, c) => sum + c.totalSpent, 0)
+  const totalCustomers = customers.filter(c => c.role !== 'admin' && c.role !== 'owner').length
 
-  const handleDelete = (customerId) => {
-    if (window.confirm('Bạn có chắc muốn xóa tài khoản khách hàng này?')) {
-      setCustomers(customers.filter((c) => c.id !== customerId))
-      setSelectedCustomer(null)
+  const handleBlockToggle = async (customer) => {
+    try {
+      const res = await api.put(`/users/${customer._id}/block`)
+      setCustomers(prev =>
+        prev.map(c => c._id === customer._id ? res.data.data : c)
+      )
+      if (selectedCustomer?._id === customer._id) {
+        setSelectedCustomer(res.data.data)
+      }
+    } catch (err) {
+      alert('Lỗi: ' + (err.response?.data?.message || err.message))
     }
   }
 
   const formatDate = (dateStr) => {
+    if (!dateStr) return '—'
     return new Date(dateStr).toLocaleDateString('vi-VN', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
     })
+  }
+
+  const getRoleBadge = (role) => {
+    switch (role) {
+      case 'admin':
+      case 'owner':
+        return <span className="role-badge role-admin">👑 Admin</span>
+      default:
+        return <span className="role-badge role-user">👤 Khách hàng</span>
+    }
+  }
+
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case 'Blocked':
+        return <span className="status-badge status-blocked">🔴 Bị chặn</span>
+      case 'Verified':
+        return <span className="status-badge status-verified">🟢 Đã xác thực</span>
+      default:
+        return <span className="status-badge status-pending">🟡 Chờ xác thực</span>
+    }
   }
 
   return (
@@ -37,15 +85,23 @@ function ManageCustomers() {
       <div className="customer-stats">
         <div className="customer-stat">
           <div className="customer-stat-value">{customers.length}</div>
-          <div className="customer-stat-label">Tổng khách hàng</div>
+          <div className="customer-stat-label">Tổng tài khoản</div>
         </div>
         <div className="customer-stat">
-          <div className="customer-stat-value">{totalOrders}</div>
-          <div className="customer-stat-label">Tổng đơn hàng</div>
+          <div className="customer-stat-value">{totalCustomers}</div>
+          <div className="customer-stat-label">Khách hàng</div>
         </div>
         <div className="customer-stat">
-          <div className="customer-stat-value">${totalRevenue.toLocaleString()}</div>
-          <div className="customer-stat-label">Tổng doanh thu</div>
+          <div className="customer-stat-value">
+            {customers.filter(c => c.status === 'Verified').length}
+          </div>
+          <div className="customer-stat-label">Đã xác thực</div>
+        </div>
+        <div className="customer-stat">
+          <div className="customer-stat-value" style={{ color: '#f87171' }}>
+            {customers.filter(c => c.status === 'Blocked').length}
+          </div>
+          <div className="customer-stat-label">Bị chặn</div>
         </div>
       </div>
 
@@ -62,121 +118,129 @@ function ManageCustomers() {
         </div>
       </div>
 
+      {/* Loading / Error */}
+      {isLoading && (
+        <div className="table-empty">
+          <div className="table-empty-icon">⏳</div>
+          <p>Đang tải danh sách khách hàng...</p>
+        </div>
+      )}
+
+      {error && (
+        <div className="table-empty" style={{ color: '#f87171' }}>
+          <div className="table-empty-icon">❌</div>
+          <p>{error}</p>
+        </div>
+      )}
+
       {/* Table */}
-      <div className="data-table-wrapper">
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Khách hàng</th>
-              <th>Điện thoại</th>
-              <th>Ngày đăng ký</th>
-              <th>Đơn hàng</th>
-              <th>Chi tiêu</th>
-              <th>Thao tác</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredCustomers.length === 0 ? (
+      {!isLoading && !error && (
+        <div className="data-table-wrapper">
+          <table className="data-table">
+            <thead>
               <tr>
-                <td colSpan="6">
-                  <div className="table-empty">
-                    <div className="table-empty-icon">👥</div>
-                    <p>Không tìm thấy khách hàng nào</p>
-                  </div>
-                </td>
+                <th>Khách hàng</th>
+                <th>Vai trò</th>
+                <th>Trạng thái</th>
+                <th>Ngày đăng ký</th>
+                <th>Thao tác</th>
               </tr>
-            ) : (
-              filteredCustomers.map((customer, index) => (
-                <tr key={customer.id}>
-                  <td>
-                    <div className="customer-cell">
-                      <div className={`customer-avatar avatar-${(index % 6) + 1}`}>
-                        {customer.name.charAt(0).toUpperCase()}
-                      </div>
-                      <div>
-                        <div className="customer-name">{customer.name}</div>
-                        <div className="customer-email">{customer.email}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td>{customer.phone}</td>
-                  <td>{formatDate(customer.createdAt)}</td>
-                  <td>
-                    <span
-                      className={`order-badge ${customer.totalOrders === 0 ? 'no-orders' : ''}`}
-                    >
-                      {customer.totalOrders} đơn
-                    </span>
-                  </td>
-                  <td>
-                    <span className="table-price">${customer.totalSpent.toLocaleString()}</span>
-                  </td>
-                  <td>
-                    <div className="table-actions">
-                      <button
-                        className="action-btn"
-                        title="Xem chi tiết"
-                        onClick={() => setSelectedCustomer(customer)}
-                      >
-                        👁️
-                      </button>
-                      <button
-                        className="action-btn delete"
-                        title="Xóa"
-                        onClick={() => handleDelete(customer.id)}
-                      >
-                        🗑️
-                      </button>
+            </thead>
+            <tbody>
+              {filteredCustomers.length === 0 ? (
+                <tr>
+                  <td colSpan="5">
+                    <div className="table-empty">
+                      <div className="table-empty-icon">👥</div>
+                      <p>Không tìm thấy khách hàng nào</p>
                     </div>
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+              ) : (
+                filteredCustomers.map((customer, index) => (
+                  <tr key={customer._id}>
+                    <td>
+                      <div className="customer-cell">
+                        <div className={`customer-avatar avatar-${(index % 6) + 1}`}>
+                          {(customer.fullName || customer.name || customer.email || 'U')[0].toUpperCase()}
+                        </div>
+                        <div>
+                          <div className="customer-name">
+                            {customer.fullName || customer.name || '—'}
+                          </div>
+                          <div className="customer-email">{customer.email}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>{getRoleBadge(customer.role)}</td>
+                    <td>{getStatusBadge(customer.status)}</td>
+                    <td>{formatDate(customer.createdAt)}</td>
+                    <td>
+                      <div className="table-actions">
+                        <button
+                          className="action-btn"
+                          title="Xem chi tiết"
+                          onClick={() => setSelectedCustomer(customer)}
+                        >
+                          👁️
+                        </button>
+                        <button
+                          className={`action-btn ${customer.status === 'Blocked' ? 'unblock' : 'delete'}`}
+                          title={customer.status === 'Blocked' ? 'Bỏ chặn' : 'Chặn tài khoản'}
+                          onClick={() => handleBlockToggle(customer)}
+                        >
+                          {customer.status === 'Blocked' ? '🔓' : '🔒'}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {/* Customer Detail Modal */}
       {selectedCustomer && (
         <div className="modal-overlay" onClick={() => setSelectedCustomer(null)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3 className="modal-title">👤 Chi tiết khách hàng</h3>
-              <button
-                className="modal-close"
-                onClick={() => setSelectedCustomer(null)}
-              >
-                ✕
-              </button>
+              <h3 className="modal-title">👤 Chi tiết tài khoản</h3>
+              <button className="modal-close" onClick={() => setSelectedCustomer(null)}>✕</button>
             </div>
             <div className="modal-body">
               <div className="customer-detail">
                 <div className="customer-detail-row">
                   <span className="customer-detail-label">Họ tên</span>
-                  <span className="customer-detail-value">{selectedCustomer.name}</span>
+                  <span className="customer-detail-value">
+                    {selectedCustomer.fullName || selectedCustomer.name || '—'}
+                  </span>
                 </div>
                 <div className="customer-detail-row">
                   <span className="customer-detail-label">Email</span>
                   <span className="customer-detail-value">{selectedCustomer.email}</span>
                 </div>
                 <div className="customer-detail-row">
-                  <span className="customer-detail-label">Điện thoại</span>
-                  <span className="customer-detail-value">{selectedCustomer.phone}</span>
+                  <span className="customer-detail-label">Số điện thoại</span>
+                  <span className="customer-detail-value">{selectedCustomer.phone || '—'}</span>
+                </div>
+                <div className="customer-detail-row">
+                  <span className="customer-detail-label">Vai trò</span>
+                  <span className="customer-detail-value">{getRoleBadge(selectedCustomer.role)}</span>
+                </div>
+                <div className="customer-detail-row">
+                  <span className="customer-detail-label">Trạng thái</span>
+                  <span className="customer-detail-value">{getStatusBadge(selectedCustomer.status)}</span>
                 </div>
                 <div className="customer-detail-row">
                   <span className="customer-detail-label">Ngày đăng ký</span>
-                  <span className="customer-detail-value">
-                    {formatDate(selectedCustomer.createdAt)}
-                  </span>
+                  <span className="customer-detail-value">{formatDate(selectedCustomer.createdAt)}</span>
                 </div>
                 <div className="customer-detail-row">
-                  <span className="customer-detail-label">Tổng đơn hàng</span>
-                  <span className="customer-detail-value">{selectedCustomer.totalOrders} đơn</span>
-                </div>
-                <div className="customer-detail-row">
-                  <span className="customer-detail-label">Tổng chi tiêu</span>
+                  <span className="customer-detail-label">Đăng nhập sai</span>
                   <span className="customer-detail-value">
-                    ${selectedCustomer.totalSpent.toLocaleString()}
+                    {selectedCustomer.loginAttempts || 0} lần
                   </span>
                 </div>
               </div>
@@ -189,10 +253,12 @@ function ManageCustomers() {
                 Đóng
               </button>
               <button
-                className="btn btn-secondary btn-sm"
-                onClick={() => handleDelete(selectedCustomer.id)}
+                className={`btn btn-sm ${selectedCustomer.status === 'Blocked' ? 'btn-primary' : 'btn-secondary'}`}
+                onClick={() => {
+                  handleBlockToggle(selectedCustomer)
+                }}
               >
-                🗑️ Xóa tài khoản
+                {selectedCustomer.status === 'Blocked' ? '🔓 Bỏ chặn' : '🔒 Chặn tài khoản'}
               </button>
             </div>
           </div>

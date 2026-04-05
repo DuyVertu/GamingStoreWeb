@@ -142,3 +142,61 @@
     align-items: stretch;
   }
 }
+
+/* Status badges */
+.status-badge, .role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-verified {
+  background: rgba(0, 255, 136, 0.1);
+  color: #00ff88;
+  border: 1px solid rgba(0, 255, 136, 0.25);
+}
+
+.status-blocked {
+  background: rgba(248, 113, 113, 0.1);
+  color: #f87171;
+  border: 1px solid rgba(248, 113, 113, 0.25);
+}
+
+.status-pending {
+  background: rgba(251, 191, 36, 0.1);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.25);
+}
+
+.role-admin {
+  background: rgba(181, 55, 242, 0.15);
+  color: #c084fc;
+  border: 1px solid rgba(181, 55, 242, 0.3);
+}
+
+.role-user {
+  background: rgba(0, 217, 255, 0.1);
+  color: #00d9ff;
+  border: 1px solid rgba(0, 217, 255, 0.2);
+}
+
+/* Unblock button */
+.action-btn.unblock {
+  color: #00ff88;
+}
+
+.action-btn.unblock:hover {
+  background: rgba(0, 255, 136, 0.1);
+}
+
+/* Customer stat 4th child */
+.customer-stat:nth-child(4) .customer-stat-value {
+  background: linear-gradient(135deg, #f87171, #b537f2);
+  -webkit-background-clip: text;
+  background-clip: text;
+}

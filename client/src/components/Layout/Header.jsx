@@ -74,20 +74,26 @@ function Header() {
             <div className="user-menu">
               {user ? (
                 <>
-                  {user.role === 'owner' && (
+                  {(user.role === 'owner' || user.role === 'admin') && (
                     <Link to="/owner/dashboard" className="header-link" style={{ color: 'var(--color-accent)' }}>
                       👑 Quản lý
                     </Link>
                   )}
-                  <button className="icon-btn">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                      <circle cx="12" cy="8" r="5" strokeWidth="2"/>
-                      <path d="M3 21c0-5 4-9 9-9s9 4 9 9" strokeWidth="2"/>
-                    </svg>
-                  </button>
-                  <button onClick={logout} className="btn btn-sm">
-                    Đăng xuất
-                  </button>
+                  <div className="user-chip">
+                    <div className="user-avatar">
+                      {(user.fullName || user.name || user.email || 'U')[0].toUpperCase()}
+                    </div>
+                    <span className="user-name">
+                      {user.fullName || user.name || user.email?.split('@')[0]}
+                    </span>
+                    <div className="user-dropdown">
+                      <div className="dropdown-email">{user.email}</div>
+                      <div className="dropdown-divider" />
+                      <button onClick={logout} className="dropdown-item danger">
+                        🚪 Đăng xuất
+                      </button>
+                    </div>
+                  </div>
                 </>
               ) : (
                 <Link to="/login" className="btn btn-primary btn-sm">

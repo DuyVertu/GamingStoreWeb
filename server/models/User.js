@@ -42,7 +42,22 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['user', 'admin'],
     default: 'user'
-  }
+  },
+  status: {
+    type: String,
+    enum: ['Unverified', 'Verified', 'Blocked'],
+    default: 'Unverified'
+  },
+  verificationCode: String,
+  verificationCodeExpires: Date,
+  loginAttempts: {
+    type: Number,
+    required: true,
+    default: 0
+  },
+  lockUntil: Date,
+  resetPasswordToken: String,
+  resetPasswordExpires: Date
 }, {
   timestamps: true
 });

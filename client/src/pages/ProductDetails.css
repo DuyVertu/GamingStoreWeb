@@ -208,6 +208,42 @@
   border-color: var(--color-black);
 }
 
+/* Color variant buttons — need visible background on dark backgrounds */
+.color-options {
+  gap: 0.5rem;
+}
+
+.color-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.85);
+  border-radius: 8px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.color-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #fff;
+}
+
+.color-btn.active {
+  background: rgba(0, 212, 170, 0.18) !important;
+  border-color: #00d4aa !important;
+  color: #00d4aa !important;
+  font-weight: 700;
+}
+
+/* Stars — ensure gold is visible */
+.stars {
+  display: flex;
+  gap: 3px;
+}
+
 /* Quantity & Actions */
 .quantity-section {
   display: flex;

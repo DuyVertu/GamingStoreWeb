@@ -1,116 +1,182 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import crypto from 'crypto';
+import { sendEmail, generateOTP } from '../utils/email.js';
+import { protect } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Generate JWT Token
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE
+  return jwt.sign({ id }, process.env.JWT_SECRET || 'secret123', {
+    expiresIn: process.env.JWT_EXPIRE || '30d'
   });
 };
 
 // @route   POST /api/auth/register
-// @desc    Register new user
-// @access  Public
 router.post('/register', async (req, res) => {
   try {
     const { name, email, password } = req.body;
     
-    // Check if user exists
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      return res.status(400).json({
-        success: false,
-        message: 'User already exists'
-      });
+    let user = await User.findOne({ email });
+    if (user) {
+      if (user.status === 'Verified') {
+         return res.status(400).json({ success: false, message: 'Email already exists and is verified' });
+      }
+      // If unverified, we can recreate or just update the OTP
+    } else {
+      user = new User({ name, email, password, status: 'Unverified' });
     }
     
-    // Create user
-    const user = await User.create({ name, email, password });
+    const otp = generateOTP();
+    user.verificationCode = otp;
+    user.verificationCodeExpires = Date.now() + 10 * 60 * 1000; // 10 mins
+    await user.save();
     
-    // Generate token
-    const token = generateToken(user._id);
+    await sendEmail({
+       to: email,
+       subject: 'Welcome to GamingGear! Verify your email',
+       text: `Hello ${name},\n\nYour OTP code is: ${otp}\n\nThis code will expire in 10 minutes.`
+    });
     
     res.status(201).json({
       success: true,
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email
-      }
+      message: 'Account created. Please check your email for OTP.',
+      status: 'Unverified'
     });
   } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: error.message
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// @route   POST /api/auth/verify-email
+router.post('/verify-email', async (req, res) => {
+  try {
+    const { email, code } = req.body;
+    const user = await User.findOne({ 
+       email, 
+       verificationCode: code,
+       verificationCodeExpires: { $gt: Date.now() } 
     });
+
+    if (!user) {
+       return res.status(400).json({ success: false, message: 'Invalid or expired verification code' });
+    }
+
+    user.status = 'Verified';
+    user.verificationCode = undefined;
+    user.verificationCodeExpires = undefined;
+    await user.save();
+
+    const token = generateToken(user._id);
+    res.status(200).json({ success: true, message: 'Account verified successfully', token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
 // @route   POST /api/auth/login
-// @desc    Login user
-// @access  Public
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     
-    // Check for user
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid credentials'
-      });
+      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    }
+
+    // Check account locks
+    if (user.lockUntil && user.lockUntil > Date.now()) {
+      const remainingTime = Math.ceil((user.lockUntil - Date.now()) / 60000);
+      return res.status(403).json({ success: false, message: `Account locked. Try again in ${remainingTime} minutes.` });
+    }
+
+    if (user.status === 'Blocked') {
+       return res.status(403).json({ success: false, message: 'Account has been blocked by admin.' });
     }
     
-    // Check password
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid credentials'
-      });
+      user.loginAttempts += 1;
+      if (user.loginAttempts >= 5) {
+         user.lockUntil = Date.now() + 15 * 60 * 1000; // 15 mins lock
+         await user.save();
+         return res.status(403).json({ success: false, message: 'Too many failed attempts. Account locked for 15 minutes.' });
+      }
+      await user.save();
+      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    }
+
+    if (user.status === 'Unverified') {
+       return res.status(403).json({ success: false, message: 'Account is unverified. Please verify your email first.' });
     }
     
-    // Generate token
-    const token = generateToken(user._id);
+    // Success reset attempts
+    user.loginAttempts = 0;
+    user.lockUntil = undefined;
+    await user.save();
     
-    res.json({
-      success: true,
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email
-      }
-    });
+    const token = generateToken(user._id);
+    res.json({ success: true, token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// @route   POST /api/auth/forgot-password
+router.post('/forgot-password', async (req, res) => {
+  try {
+     const user = await User.findOne({ email: req.body.email });
+     if (!user) {
+       return res.status(404).json({ success: false, message: 'There is no user with that email' });
+     }
+
+     const resetToken = crypto.randomBytes(20).toString('hex');
+     user.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+     user.resetPasswordExpires = Date.now() + 10 * 60 * 1000; // 10 mins
+     await user.save({ validateBeforeSave: false });
+
+     // Send email
+     await sendEmail({
+       to: user.email,
+       subject: 'Password reset token',
+       text: `You requested a password reset. Your reset token is: ${resetToken}\nMake a request to /api/auth/reset-password with this token.`
+     });
+
+     res.status(200).json({ success: true, message: 'Email sent' });
+  } catch (error) {
+     res.status(500).json({ success: false, message: 'Email could not be sent' });
+  }
+});
+
+// @route   POST /api/auth/reset-password
+router.post('/reset-password', async (req, res) => {
+  try {
+     const resetPasswordToken = crypto.createHash('sha256').update(req.body.token).digest('hex');
+     const user = await User.findOne({
+        resetPasswordToken,
+        resetPasswordExpires: { $gt: Date.now() }
+     });
+
+     if (!user) {
+        return res.status(400).json({ success: false, message: 'Invalid token' });
+     }
+
+     user.password = req.body.password;
+     user.resetPasswordToken = undefined;
+     user.resetPasswordExpires = undefined;
+     await user.save();
+     
+     const token = generateToken(user._id);
+     res.status(200).json({ success: true, token });
+  } catch (error) {
+     res.status(500).json({ success: false, message: error.message });
   }
 });
 
 // @route   GET /api/auth/me
-// @desc    Get current user
-// @access  Private
-router.get('/me', async (req, res) => {
-  try {
-    // This route needs auth middleware (implement later)
-    res.json({
-      success: true,
-      message: 'Get current user (requires auth middleware)'
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
-  }
+router.get('/me', protect, async (req, res) => {
+  res.json({ success: true, user: req.user });
 });
 
 export default router;

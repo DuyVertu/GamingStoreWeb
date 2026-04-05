@@ -1,0 +1,63 @@
+@baseUrl = http://localhost:5000/api
+
+### 1. Đăng ký tài khoản (Sinh ra OTP)
+# @name register
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Khánh Duy",
+  "email": "nguyenkhanhduy0114@gmail.com",
+  "password": "password123"
+}
+
+### 2. Xác thực Email bằng mã OTP
+# -> HÃY MỞ TERMINAL ĐANG CHẠY SERVER ĐỂ COPY MÃ OTP VÀ DÁN VÀO "code" DƯỚI ĐÂY
+# @name verify
+POST {{baseUrl}}/auth/verify-email
+Content-Type: application/json
+
+{
+  "email": "testuser@gmail.com",
+  "code": "MÃ-OTP-TRÊN-TERMINAL"
+}
+
+### Lấy Token Đăng nhập ra biến môi trường
+@token = {{verify.response.body.token}}
+
+### 3. Xem danh sách Sản phẩm
+# @name getProducts
+GET {{baseUrl}}/products
+
+### 4. Lấy JWT Token từ việc Đăng nhập lại
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "testuser@gmail.com",
+  "password": "password123"
+}
+
+### 5. Xem Profile (Cần token)
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{login.response.body.token}}
+
+### 6. Quản lý Giỏ Hàng: Lấy giỏ hàng
+GET {{baseUrl}}/cart
+Authorization: Bearer {{login.response.body.token}}
+
+### 7. Checkout Đơn hàng từ Giỏ Hàng
+POST {{baseUrl}}/orders/pay
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.token}}
+
+{
+  "shippingAddress": {
+    "fullName": "Test User",
+    "address": "123 Street",
+    "city": "HCM",
+    "phone": "0912345678"
+  },
+  "paymentMethod": "COD"
+}

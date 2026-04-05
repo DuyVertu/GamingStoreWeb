@@ -1,5 +1,8 @@
 import express from 'express';
 import Product from '../models/Product.js';
+import Review from '../models/Review.js';
+import Order from '../models/Order.js';
+import { protect, authorize } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -88,7 +91,7 @@ router.get('/:id', async (req, res) => {
 // @route   POST /api/products
 // @desc    Create new product (Admin only)
 // @access  Private/Admin
-router.post('/', async (req, res) => {
+router.post('/', protect, authorize('admin'), async (req, res) => {
   try {
     const product = await Product.create(req.body);
     
@@ -107,7 +110,7 @@ router.post('/', async (req, res) => {
 // @route   PUT /api/products/:id
 // @desc    Update product (Admin only)
 // @access  Private/Admin
-router.put('/:id', async (req, res) => {
+router.put('/:id', protect, authorize('admin'), async (req, res) => {
   try {
     const product = await Product.findByIdAndUpdate(
       req.params.id,
@@ -137,7 +140,7 @@ router.put('/:id', async (req, res) => {
 // @route   DELETE /api/products/:id
 // @desc    Delete product (Admin only)
 // @access  Private/Admin
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', protect, authorize('admin'), async (req, res) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
     
@@ -157,6 +160,46 @@ router.delete('/:id', async (req, res) => {
       success: false,
       message: error.message
     });
+  }
+});
+
+// @route   POST /api/products/:id/reviews
+// @desc    Create new review
+// @access  Private
+router.post('/:id/reviews', protect, async (req, res) => {
+  try {
+    const { rating, comment } = req.body;
+    
+    // Check if user bought and order is Delivered
+    const orders = await Order.find({ user: req.user._id, status: 'Delivered' });
+    const hasBought = orders.some(order => order.orderItems.find(item => item.product.toString() === req.params.id));
+    
+    if (!hasBought) {
+      return res.status(400).json({ success: false, message: 'You can only review products you have bought' });
+    }
+
+    const alreadyReviewed = await Review.findOne({ user: req.user._id, product: req.params.id });
+    if (alreadyReviewed) {
+      return res.status(400).json({ success: false, message: 'Product already reviewed' });
+    }
+
+    const review = await Review.create({
+      user: req.user._id,
+      product: req.params.id,
+      rating: Number(rating),
+      comment
+    });
+
+    // Update product rating
+    const reviews = await Review.find({ product: req.params.id });
+    const product = await Product.findById(req.params.id);
+    product.reviewCount = reviews.length;
+    product.rating = reviews.reduce((acc, current) => acc + current.rating, 0) / reviews.length;
+    await product.save();
+
+    res.status(201).json({ success: true, data: review });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 

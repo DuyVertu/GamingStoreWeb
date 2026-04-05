@@ -1,5 +1,7 @@
-import { useState } from 'react'
-import { mockProducts, categories } from '../../data/products'
+import { useState, useEffect } from 'react'
+import { categories } from '../../data/products'
+import { formatVND } from '../../utils/format'
+import api from '../../services/api'
 import './ManageGear.css'
 
 const emptyProduct = {
@@ -14,11 +16,30 @@ const emptyProduct = {
 }
 
 function ManageGear() {
-  const [products, setProducts] = useState([...mockProducts])
+  const [products, setProducts] = useState([])
   const [search, setSearch] = useState('')
   const [showModal, setShowModal] = useState(false)
   const [editingProduct, setEditingProduct] = useState(null)
   const [formData, setFormData] = useState(emptyProduct)
+  const [isLoading, setIsLoading] = useState(true)
+  const [confirmDelete, setConfirmDelete] = useState(null) // { id, name }
+
+  // 1. Lấy danh sách sản phẩm từ CSDL khi load trang
+  useEffect(() => {
+    fetchProducts()
+  }, [])
+
+  const fetchProducts = async () => {
+    try {
+      setIsLoading(true)
+      const res = await api.get('/products')
+      setProducts(res.data.data) // Theo API trả về { success: true, data: [...] }
+    } catch (error) {
+      console.error('Lỗi khi tải sản phẩm:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const filteredProducts = products.filter(
     (p) =>
@@ -47,43 +68,46 @@ function ManageGear() {
     setShowModal(true)
   }
 
-  const handleDelete = (productId) => {
-    if (window.confirm('Bạn có chắc muốn xóa sản phẩm này?')) {
-      setProducts(products.filter((p) => p.id !== productId))
+  // 3. Gọi API Xóa Sản phẩm
+  const handleDelete = async (productId) => {
+    try {
+      console.log('Deleting product:', productId)
+      await api.delete(`/products/${productId}`)
+      setProducts(products.filter((p) => p._id !== productId))
+      setConfirmDelete(null)
+    } catch (error) {
+      console.error('Lỗi khi xóa:', error.response || error)
+      alert('Xóa thất bại: ' + (error.response?.data?.message || error.message))
+      setConfirmDelete(null)
     }
   }
 
-  const handleSubmit = (e) => {
+  // 2. Gọi API Lưu Hoặc Sửa
+  const handleSubmit = async (e) => {
     e.preventDefault()
 
-    if (editingProduct) {
-      // Update
-      setProducts(
-        products.map((p) =>
-          p.id === editingProduct.id
-            ? { ...p, ...formData, price: Number(formData.price), stock: Number(formData.stock), salePrice: formData.salePrice ? Number(formData.salePrice) : undefined }
-            : p
-        )
-      )
-    } else {
-      // Add new
-      const newProduct = {
-        ...formData,
-        id: String(Date.now()),
-        price: Number(formData.price),
-        stock: Number(formData.stock),
-        salePrice: formData.salePrice ? Number(formData.salePrice) : undefined,
-        rating: 0,
-        reviewCount: 0,
-        isNew: true,
-        colors: [],
-        specs: {},
-        images: [],
-      }
-      setProducts([newProduct, ...products])
+    const submitData = {
+      ...formData,
+      price: Number(formData.price),
+      stock: Number(formData.stock),
+      salePrice: formData.salePrice ? Number(formData.salePrice) : undefined,
     }
 
-    setShowModal(false)
+    try {
+      if (editingProduct) {
+        // Cập nhật (PUT)
+        const res = await api.put(`/products/${editingProduct._id}`, submitData)
+        setProducts(products.map((p) => (p._id === editingProduct._id ? res.data.data : p)))
+      } else {
+        // Thêm mới (POST)
+        const res = await api.post('/products', submitData)
+        setProducts([res.data.data, ...products])
+      }
+      setShowModal(false)
+    } catch (error) {
+      console.error('Lỗi khi lưu:', error)
+      alert('Không thể lưu sản phẩm. Vui lòng thử lại!')
+    }
   }
 
   const handleChange = (e) => {
@@ -104,7 +128,7 @@ function ManageGear() {
           />
         </div>
         <button className="btn btn-primary btn-sm" onClick={handleAdd}>
-          ➕ Thêm sản phẩm
+          ➕ Thêm sản phẩm (Database thật)
         </button>
       </div>
 
@@ -122,7 +146,16 @@ function ManageGear() {
             </tr>
           </thead>
           <tbody>
-            {filteredProducts.length === 0 ? (
+            {isLoading ? (
+              <tr>
+                <td colSpan="6">
+                  <div className="table-empty">
+                    <div className="table-empty-icon">⏳</div>
+                    <p>Đang tải dữ liệu từ máy chủ...</p>
+                  </div>
+                </td>
+              </tr>
+            ) : filteredProducts.length === 0 ? (
               <tr>
                 <td colSpan="6">
                   <div className="table-empty">
@@ -133,7 +166,7 @@ function ManageGear() {
               </tr>
             ) : (
               filteredProducts.map((product) => (
-                <tr key={product.id}>
+                <tr key={product._id}>
                   <td>
                     <div className="table-product">
                       <img
@@ -154,10 +187,10 @@ function ManageGear() {
                   </td>
                   <td>
                     <span className="table-price">
-                      ${product.salePrice || product.price}
+                      {formatVND(product.salePrice || product.price)}
                     </span>
                     {product.salePrice && (
-                      <span className="table-price-sale">${product.price}</span>
+                      <span className="table-price-sale">{formatVND(product.price)}</span>
                     )}
                   </td>
                   <td>
@@ -168,7 +201,7 @@ function ManageGear() {
                     </span>
                   </td>
                   <td>
-                    ⭐ {product.rating} ({product.reviewCount})
+                    ⭐ {product.rating || 0} ({product.reviewCount || 0})
                   </td>
                   <td>
                     <div className="table-actions">
@@ -182,7 +215,7 @@ function ManageGear() {
                       <button
                         className="action-btn delete"
                         title="Xóa"
-                        onClick={() => handleDelete(product.id)}
+                        onClick={() => setConfirmDelete({ id: product._id, name: product.name })}
                       >
                         🗑️
                       </button>
@@ -195,13 +228,13 @@ function ManageGear() {
         </table>
       </div>
 
-      {/* Modal */}
+      {/* Modal ... (Giữ nguyên y hệt Form trước đây, chỉ thay cơ chế call api) */}
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h3 className="modal-title">
-                {editingProduct ? '✏️ Sửa sản phẩm' : '➕ Thêm sản phẩm mới'}
+                {editingProduct ? '✏️ Sửa sản phẩm (DB)' : '➕ Thêm sản phẩm mới (DB)'}
               </h3>
               <button className="modal-close" onClick={() => setShowModal(false)}>
                 ✕
@@ -238,19 +271,19 @@ function ManageGear() {
 
                 <div className="modal-row">
                   <div className="form-group">
-                    <label className="form-label">Giá (USD)</label>
+                    <label className="form-label">Giá (VNĐ)</label>
                     <input
                       type="number"
                       className="form-input"
                       name="price"
                       value={formData.price}
                       onChange={handleChange}
-                      placeholder="199"
+                      placeholder="vd: 1500000"
                       required
                     />
                   </div>
                   <div className="form-group">
-                    <label className="form-label">Giá sale (USD)</label>
+                    <label className="form-label">Giá sale (VNĐ)</label>
                     <input
                       type="number"
                       className="form-input"
@@ -296,7 +329,7 @@ function ManageGear() {
 
                 <div className="modal-row">
                   <div className="form-group">
-                    <label className="form-label">Link ảnh</label>
+                    <label className="form-label">Link ảnh (URL)</label>
                     <input
                       type="text"
                       className="form-input"
@@ -330,10 +363,47 @@ function ManageGear() {
                   Hủy
                 </button>
                 <button type="submit" className="btn btn-primary btn-sm">
-                  {editingProduct ? 'Cập nhật' : 'Thêm mới'}
+                  {editingProduct ? 'Cập nhật' : 'Lưu Tới Database'}
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Confirm Delete Modal */}
+      {confirmDelete && (
+        <div className="modal-overlay" onClick={() => setConfirmDelete(null)}>
+          <div className="modal" style={{ maxWidth: '420px' }} onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3 className="modal-title">🗑️ Xác nhận xóa</h3>
+              <button className="modal-close" onClick={() => setConfirmDelete(null)}>✕</button>
+            </div>
+            <div className="modal-body">
+              <p style={{ color: '#ccc', lineHeight: '1.6' }}>
+                Bạn có chắc muốn xóa sản phẩm <strong style={{ color: '#fff' }}>"{confirmDelete.name}"</strong>?
+              </p>
+              <p style={{ color: '#f87171', fontSize: '0.85rem', marginTop: '8px' }}>
+                ⚠️ Hành động này không thể hoàn tác!
+              </p>
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-outline btn-sm"
+                onClick={() => setConfirmDelete(null)}
+              >
+                Hủy
+              </button>
+              <button
+                type="button"
+                className="btn btn-sm"
+                style={{ background: '#ef4444', color: '#fff' }}
+                onClick={() => handleDelete(confirmDelete.id)}
+              >
+                Xóa vĩnh viễn
+              </button>
+            </div>
           </div>
         </div>
       )}

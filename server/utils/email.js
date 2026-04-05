@@ -1,0 +1,61 @@
+import nodemailer from 'nodemailer';
+
+export const sendEmail = async ({ to, subject, text }) => {
+  let transporter;
+
+  // Tự động dùng Ethereal (thư gửi nháp) nếu người dùng chưa điền pass
+  if (!process.env.EMAIL_PASS || process.env.EMAIL_PASS === 'your-google-app-password') {
+    const testAccount = await nodemailer.createTestAccount();
+    transporter = nodemailer.createTransport({
+      host: "smtp.ethereal.email",
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: testAccount.user, // generated ethereal user
+        pass: testAccount.pass, // generated ethereal password
+      },
+    });
+    console.log(`⚠️ Đang dùng Ethereal Test Account: ${testAccount.user}`);
+  } else {
+    // Dùng Gmail thật khi có thông tin
+    transporter = nodemailer.createTransport({
+      service: process.env.EMAIL_SERVICE || 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
+    });
+  }
+
+  const senderEmail = (!process.env.EMAIL_PASS || process.env.EMAIL_PASS === 'your-google-app-password')
+    ? 'test-noreply@ethereal.email' // Fake sender for ethereal
+    : process.env.EMAIL_USER;
+
+  // Mail options
+  const mailOptions = {
+    from: `"GamingGear Store" <${senderEmail}>`,
+    to,
+    subject,
+    text
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`Email sent successfully to ${to}. ID: ${info.messageId}`);
+    
+    // In ra link xem thử Email ảo nếu đang gửi test
+    if (!process.env.EMAIL_PASS || process.env.EMAIL_PASS === 'your-google-app-password') {
+       console.log(`\n📬 LINK XEM EMAIL VỪA TRÊN TRÌNH DUYỆT: \n${nodemailer.getTestMessageUrl(info)}\n`);
+    }
+
+    return true;
+  } catch (error) {
+    console.error(`Error sending email to ${to}:`, error);
+    throw new Error('Email could not be sent');
+  }
+};
+
+export const generateOTP = () => {
+  // Generate a random 6-digit number
+  return Math.floor(100000 + Math.random() * 900000).toString();
+};

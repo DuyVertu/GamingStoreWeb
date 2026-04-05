@@ -1,41 +1,43 @@
 import { useNavigate } from 'react-router-dom'
 import { useWishlistStore } from '../../store/useWishlistStore'
 import { useCartStore } from '../../store/useCartStore'
+import { formatVND } from '../../utils/format'
 import './ProductCard.css'
 
 function ProductCard({ product }) {
   const navigate = useNavigate()
   const { toggleItem, isInWishlist } = useWishlistStore()
   const { addItem } = useCartStore()
-  
-  const inWishlist = isInWishlist(product.id)
+
+  const productId = product._id || product.id
+  const inWishlist = isInWishlist(productId)
   const displayPrice = product.salePrice || product.price
   const hasDiscount = product.salePrice && product.salePrice < product.price
-  
+
   const handleBuyNow = (e) => {
     e.stopPropagation()
     addItem(product)
     navigate('/cart')
   }
-  
+
   const handleWishlistToggle = (e) => {
     e.stopPropagation()
     toggleItem(product)
   }
-  
+
   const handleCardClick = () => {
-    navigate(`/products/${product.id}`)
+    navigate(`/products/${productId}`)
   }
-  
+
   return (
     <div className="product-card" onClick={handleCardClick}>
       <div className="product-image-wrapper">
-        <img 
-          src={product.image} 
+        <img
+          src={product.image}
           alt={product.name}
           className="product-image"
         />
-        
+
         {/* Badges */}
         <div className="product-badges">
           {hasDiscount && (
@@ -45,9 +47,9 @@ function ProductCard({ product }) {
             <span className="badge badge-new">NEW</span>
           )}
         </div>
-        
+
         {/* Wishlist Button */}
-        <button 
+        <button
           className={`wishlist-btn ${inWishlist ? 'active' : ''}`}
           onClick={handleWishlistToggle}
           aria-label="Add to wishlist"
@@ -57,24 +59,24 @@ function ProductCard({ product }) {
           </svg>
         </button>
       </div>
-      
+
       {/* Product Info */}
       <div className="product-info">
         {product.brand && (
           <div className="product-brand">{product.brand}</div>
         )}
-        
+
         <h3 className="product-name">{product.name}</h3>
-        
+
         {/* Rating */}
         <div className="product-rating">
           <div className="stars">
             {[...Array(5)].map((_, i) => (
-              <svg 
+              <svg
                 key={i}
-                width="14" 
-                height="14" 
-                viewBox="0 0 24 24" 
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
                 fill={i < Math.floor(product.rating || 0) ? "currentColor" : "none"}
                 stroke="currentColor"
                 strokeWidth="2"
@@ -85,20 +87,20 @@ function ProductCard({ product }) {
           </div>
           <span className="review-count">({product.reviewCount || 0})</span>
         </div>
-        
+
         {/* Price */}
         <div className="product-price">
-          <span className="price-current">${displayPrice}</span>
+          <span className="price-current">{formatVND(displayPrice)}</span>
           {hasDiscount && (
-            <span className="price-original">${product.price}</span>
+            <span className="price-original">{formatVND(product.price)}</span>
           )}
         </div>
-        
+
         {/* Buy Button */}
         <button className="buy-btn" onClick={handleBuyNow}>
           BUY NOW
         </button>
-        
+
         {/* Stock Badge */}
         {product.stock < 10 && product.stock > 0 && (
           <div className="stock-badge low-stock">
