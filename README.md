@@ -7,41 +7,48 @@ Premium Gaming Peripherals Store cho Pro Players. Full-stack E-commerce website 
 ![Node.js](https://img.shields.io/badge/Node.js-20+-339933?style=for-the-badge&logo=node.js)
 ![MongoDB](https://img.shields.io/badge/MongoDB-6.0+-47A248?style=for-the-badge&logo=mongodb)
 
+## 🌐 Môi trường Deploy (Live)
+
+Dự án hiện đã được deploy thành công trên nền tảng đám mây:
+- **Trang chủ Client (Frontend):** [https://gaminggear-store.vercel.app](https://gaminggear-store.vercel.app)
+- **Máy chủ API (Backend):** Được host trên Render
+- **Cơ sở dữ liệu (Database):** MongoDB Atlas Cloud (Cluster TLCN)
+
+### Lưu ý quan trọng khi Test trên môi trường Deploy:
+- Do chính sách **chặn cổng gửi Email** từ các gói thử nghiệm (Free tier) của Render nên hệ thống sẽ **bỏ qua bước gửi mail OTP**. 
+- Khi đăng ký tài khoản trải nghiệm, ở bước xác minh email các bạn chỉ cần nhập cứng mã OTP mặc định là: **`123456`**.
+
 ## 🎯 Giới Thiệu
 
-GamingGear Store là nền tảng thương mại điện tử chuyên cung cấp thiết bị gaming cao cấp cho game thủ chuyên nghiệp và đam mê esports. Website được thiết kế với giao diện gaming cyber đậm chất, hỗ trợ 2 vai trò người dùng: **Khách hàng (User)** và **Chủ cửa hàng (Owner)**.
+GamingGear Store là nền tảng thương mại điện tử chuyên cung cấp thiết bị gaming cao cấp cho game thủ chuyên nghiệp và đam mê esports. Website được thiết kế với giao diện gaming cyber đậm chất, hỗ trợ 2 vai trò người dùng: **Khách hàng (User)** và **Admin (Chủ cửa hàng/Owner)**.
 
 ## ✨ Tính Năng Hệ Thống
 
 ### 🔐 Xác Thực & Phân Quyền
 
-- Đăng ký / Đăng nhập / Quên mật khẩu
-- Phân quyền theo role: **User** và **Owner**
-- Route protection — Owner mới truy cập được trang quản lý
-- Tự động redirect theo role sau đăng nhập
+- Đăng ký / Đăng nhập / Quên mật khẩu.
+- Phân quyền theo role: **User** và **Admin/Owner**.
+- Cơ chế bảo mật JWT với OTP Email Verification (khi chạy local).
+- Tự động điều hướng động theo vai trò (Role-based Navigation).
 
 ### 🛍️ Người Dùng (User)
 
-- Duyệt sản phẩm theo 6 danh mục: Chuột Gaming, Bàn Phím, Tai Nghe, IEM FPS, Màn Hình, Phụ Kiện
-- Tìm kiếm và lọc sản phẩm (thương hiệu, giá, danh mục)
-- Xem chi tiết sản phẩm với thông số kỹ thuật đầy đủ
-- Giỏ hàng: thêm, điều chỉnh số lượng, xóa
-- Wishlist sản phẩm yêu thích
-- Thanh toán 3 bước: Shipping → Payment → Review
+- Duyệt sản phẩm theo 6 danh mục: Chuột Gaming, Bàn Phím, Tai Nghe, IEM FPS, Màn Hình, Phụ Kiện.
+- Tìm kiếm và lọc sản phẩm (thương hiệu, giá, danh mục, sale, hàng mới...).
+- Xem chi tiết sản phẩm với thông số kỹ thuật đầy đủ và thư viện hình ảnh thu phóng tốt.
+- Giỏ hàng: thêm, điều chỉnh số lượng, tính toán tổng bill tự động.
+- Cổng thanh toán tiện dụng hỗ trợ **VNPAY Sandbox** (Thanh toán điện tử) và COD (Thanh toán khi nhận hàng).
+- Chuyển hướng sang trang `/order-success` thân thiện sau khi mua đồ.
 
-### 👑 Chủ Cửa Hàng (Owner)
+### 👑 Chủ Cửa Hàng (Owner/Admin)
 
-- **Dashboard**: Tổng quan thống kê (sản phẩm, khách hàng, đơn hàng, doanh thu), hoạt động gần đây, sản phẩm bán chạy
-- **Quản lý Gear**: Thêm / sửa / xóa sản phẩm, tìm kiếm, hiển thị bảng với giá, tồn kho, đánh giá
-- **Quản lý Khách hàng**: Danh sách khách hàng, tìm kiếm, xem chi tiết, xóa tài khoản
+Để test trang quản lý, vui lòng dùng tài khoản CMS Admin:
+- **Email:** `nguyenkhanhduy0114@gmail.com`
+- **Mật khẩu:** `Admin123!`
 
-### 🎨 Giao Diện
-
-- Dark theme với neon accents (Green, Pink, Blue, Purple)
-- Cyber gradient và glow effects
-- Smooth animations, hover effects, micro-interactions
-- Custom scrollbar gaming style
-- Responsive design (mobile, tablet, desktop)
+- **Dashboard**: Tổng quan thống kê (tổng sản phẩm, khách hàng, số lượng đơn hàng, doanh thu ước tính), hoạt động gần đây, sản phẩm bán chạy.
+- **Quản lý Gear**: Thêm / sửa / xóa thông tin sản phẩm, hỗ trợ tìm kiếm filter.
+- **Quản lý Khách hàng**: Theo dõi danh sách user, trạng thái kiểm duyệt, và thiết lập role.
 
 ## 🎨 Tech Stack
 
@@ -49,67 +56,45 @@ GamingGear Store là nền tảng thương mại điện tử chuyên cung cấp
 
 | Công nghệ | Mục đích |
 |-----------|----------|
-| React 18.2 | UI Framework |
-| Vite 5.1 | Build Tool |
-| React Router DOM v6 | Routing & Navigation |
-| Zustand | State Management |
-| Axios | HTTP Client |
-| CSS Variables | Design System |
+| React 18.2 | UI Framework MVC kiến trúc |
+| Vite 5.1 | Build Tool / Bundler |
+| React Router DOM v6 | Component Routing / Guards |
+| Zustand | Global State Management (Cart, Auth, Model) |
+| Axios | HTTP API Client |
+| CSS Variables | Design System Themeing |
 
 ### Backend
 
 | Công nghệ | Mục đích |
 |-----------|----------|
-| Node.js + Express | Web Server & API |
-| MongoDB + Mongoose | Database & ODM |
-| JWT | Authentication |
-| bcryptjs | Password Hashing |
+| Node.js + Express | Web Server & Xử lý API |
+| MongoDB + Mongoose| Database Storage & ODM Schema Models |
+| JWT | JSON Web Tokens Authentication |
+| bcryptjs | Hashing & Security |
+| Nodemailer | Gửi thư điện tử OTP Automation |
 
-## 📁 Cấu Trúc Project
+## 📁 Cấu Trúc File & Thư Mục Nổi Bật
 
 ```
 GamingStoreWeb/
 ├── client/                         # Frontend React
 │   ├── src/
-│   │   ├── components/
-│   │   │   ├── Layout/            # Header, Footer
-│   │   │   ├── Product/           # ProductCard
-│   │   │   ├── Checkout/          # ProgressIndicator
-│   │   │   ├── Owner/             # OwnerLayout (sidebar navigation)
-│   │   │   └── PrivateRoute.jsx   # Route guard theo role
-│   │   ├── pages/
-│   │   │   ├── Home.jsx           # Trang chủ
-│   │   │   ├── Products.jsx       # Danh sách sản phẩm
-│   │   │   ├── ProductDetails.jsx # Chi tiết sản phẩm
-│   │   │   ├── Cart.jsx           # Giỏ hàng
-│   │   │   ├── Checkout.jsx       # Thanh toán
-│   │   │   ├── Login.jsx          # Đăng nhập
-│   │   │   ├── Register.jsx       # Đăng ký
-│   │   │   ├── ForgotPassword.jsx # Quên mật khẩu
-│   │   │   └── Owner/
-│   │   │       ├── Dashboard.jsx      # Tổng quan cửa hàng
-│   │   │       ├── ManageGear.jsx     # CRUD sản phẩm
-│   │   │       └── ManageCustomers.jsx # Quản lý khách hàng
-│   │   ├── store/                 # Zustand state management
-│   │   │   ├── useAuthStore.js    # Trạng thái xác thực
-│   │   │   ├── useCartStore.js    # Giỏ hàng
-│   │   │   └── useWishlistStore.js # Wishlist
-│   │   ├── services/              # API services (Axios)
-│   │   └── data/                  # Mock data
-│   └── package.json
+│   │   ├── components/            # Layout Elements, UI Components (Button, Modal...)
+│   │   ├── pages/                 # Container Views chính (Home, Cart, Admin Dashboard)
+│   │   ├── store/                 # Zustand Store quản lý trạng thái
+│   │   ├── services/              # Định nghĩa call service logic ra Backend
+│   │   └── data/                  # Mock data / seed source
+│   ├── public/                    # Assets Web
+│   └── vercel.json                # Rewrites file giúp SPA chạy trơn tru trên Vercel
 │
 ├── server/                        # Backend Node.js
-│   ├── config/                    # Cấu hình database
-│   ├── models/
-│   │   ├── Product.js             # Schema sản phẩm
-│   │   └── User.js               # Schema người dùng
-│   ├── routes/
-│   │   ├── auth.js                # Đăng ký, đăng nhập
-│   │   ├── products.js            # CRUD sản phẩm
-│   │   ├── cart.js                # Giỏ hàng
-│   │   └── orders.js             # Đơn hàng
-│   ├── seeds/                     # Dữ liệu mẫu
-│   └── server.js                  # Entry point
+│   ├── config/                    # Cấu hình Mongoose DB
+│   ├── models/                    # Khai báo schema chuẩn Product, User, Order...
+│   ├── routes/                    # Export Express Router định tuyến REST Endpoint
+│   ├── controllers/               # (Tùy chọn) Logic Xử lý request từ Route
+│   ├── utils/                     # Các Function phụ (email gửi mail)
+│   ├── seed_direct.js             # Script tự động seed toàn bộ Data thẳng lên MongoDB Atlas
+│   └── server.js                  # Điểm chạm Entry point để khởi chạy cluster Server
 │
 └── README.md
 ```
@@ -121,50 +106,31 @@ GamingStoreWeb/
 | Route | Mô tả |
 |-------|--------|
 | `/` | Trang chủ — banner, sản phẩm nổi bật |
-| `/products` | Danh sách sản phẩm — filter, search |
-| `/products/:id` | Chi tiết sản phẩm |
-| `/cart` | Giỏ hàng |
-| `/checkout` | Thanh toán |
-| `/login` | Đăng nhập |
-| `/register` | Đăng ký |
-| `/forgot-password` | Quên mật khẩu |
+| `/products` | Danh sách sản phẩm đầy đủ |
+| `/products/:id` | Xem chi tiết 1 sản phẩm chỉ định |
+| `/cart` | Giỏ hàng cá nhân |
+| `/checkout` | Thanh toán Giỏ hàng |
+| `/order-success` | Trang chúc mừng sau thanh toán Order Flow |
+| `/login` | Đăng nhập hệ thống |
+| `/register` | Đăng ký tài khoản (hỗ trợ pass OTP) |
+| `/forgot-password` | Khôi phục mật khẩu tài khoản |
 
-### Owner Routes (yêu cầu role Owner)
+### Owner Routes (Yêu cầu Role 'admin' hoặc 'owner')
 
 | Route | Mô tả |
 |-------|--------|
-| `/owner/dashboard` | Tổng quan cửa hàng |
-| `/owner/gear` | Quản lý sản phẩm (CRUD) |
-| `/owner/customers` | Quản lý khách hàng |
+| `/owner/dashboard` | Thống kê KPI báo cáo doanh thu & user |
+| `/owner/gear` | Panel Quản lý toàn vẹn Sản Phẩm (CRUD) |
+| `/owner/customers` | Panel Quản lý User/Khách Hàng |
 
-## 📝 API Endpoints
+## 📝 Demo Setup Local (Tham Khảo DEV)
 
-### Authentication
+1. Mở terminal, tại thư mục gốc `TLCN`:
+2. Mở `/server` và chạy `npm i`. Cấu hình biến môi trường kết nối MongoDB cục bộ thông qua `.env` theo form `.env.example`. Chạy lệnh `npm run dev` để start server tại `:5000`.
+3. Mở một terminal khác tại thẻ `/client` và chạy `npm i`. Sau đó chạy `npm run dev` chờ load trang Vite `:5173`.
+4. Trang web của bạn đã chạy!
 
-| Method | Endpoint | Mô tả |
-|--------|----------|--------|
-| POST | `/api/auth/register` | Đăng ký tài khoản |
-| POST | `/api/auth/login` | Đăng nhập |
-| GET | `/api/auth/me` | Lấy thông tin user hiện tại |
-
-### Products
-
-| Method | Endpoint | Mô tả |
-|--------|----------|--------|
-| GET | `/api/products` | Danh sách sản phẩm (có filter) |
-| GET | `/api/products/:id` | Chi tiết sản phẩm |
-| POST | `/api/products` | Thêm sản phẩm (Owner) |
-| PUT | `/api/products/:id` | Cập nhật sản phẩm (Owner) |
-| DELETE | `/api/products/:id` | Xóa sản phẩm (Owner) |
-
-### Cart & Orders
-
-| Method | Endpoint | Mô tả |
-|--------|----------|--------|
-| GET | `/api/cart` | Lấy giỏ hàng |
-| POST | `/api/cart/add` | Thêm vào giỏ |
-| POST | `/api/orders` | Tạo đơn hàng |
-| GET | `/api/orders` | Danh sách đơn hàng |
+*Lưu ý Local Seed DB:* Chỉ xài file `node seed_direct.js` khi bạn cần bơm dữ liệu demo vào database, có chứa sẵn hơn chục món đồ chơi gaming. Thường dùng nếu cơ sở dữ liệu trống.
 
 ## 🎨 Design System
 
@@ -173,9 +139,9 @@ GamingStoreWeb/
 ```css
 --color-bg-dark: #0a0e27;    /* Dark background */
 --color-bg-card: #12162e;     /* Card background */
---color-primary: #00ff88;     /* Neon Green */
---color-secondary: #ff0055;   /* Hot Pink */
---color-tertiary: #00d9ff;    /* Cyber Blue */
+--color-primary: #00ff88;     /* Neon Green - Active state */
+--color-secondary: #ff0055;   /* Hot Pink - Alert/Sale state */
+--color-tertiary: #00d9ff;    /* Cyber Blue - Highlights */
 --color-accent: #b537f2;      /* Purple */
 ```
 
@@ -186,4 +152,4 @@ GamingStoreWeb/
 
 ---
 
-**DuyVertu - TLCN Project**
+**DuyVertu - Báo Cáo Đồ Án / Đề Tài TLCN 2024**
