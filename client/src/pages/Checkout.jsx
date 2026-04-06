@@ -159,6 +159,50 @@ function VNPayGateway({ amount, onSuccess, onCancel }) {
 }
 
 // ========================
+// Order Success Page
+// ========================
+function OrderSuccess({ order, onClose }) {
+  const navigate = useNavigate()
+  return (
+    <div className="order-success-page">
+      <div className="order-success-card">
+        <div className="order-success-icon">🎉</div>
+        <h2>Đặt hàng thành công!</h2>
+        <p>Cảm ơn bạn đã mua sắm tại <strong>GamingGear</strong></p>
+        {order && (
+          <div className="order-success-info">
+            <div className="order-success-row">
+              <span>Mã đơn hàng</span>
+              <span className="order-id">#{order._id?.slice(-8).toUpperCase()}</span>
+            </div>
+            <div className="order-success-row">
+              <span>Phương thức</span>
+              <span>{order.paymentMethod}</span>
+            </div>
+            <div className="order-success-row">
+              <span>Tổng tiền</span>
+              <span className="order-total">{formatVND(order.totalPrice)}</span>
+            </div>
+            <div className="order-success-row">
+              <span>Trạng thái</span>
+              <span className="order-status-badge">🕒 Chờ xác nhận</span>
+            </div>
+          </div>
+        )}
+        <div className="order-success-actions">
+          <button className="btn btn-outline" onClick={() => navigate('/products')}>
+            Tiếp tục mua sắm
+          </button>
+          <button className="btn btn-primary" onClick={() => navigate('/')}>
+            Về trang chủ
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ========================
 // Main Checkout Component
 // ========================
 function Checkout() {
@@ -167,8 +211,8 @@ function Checkout() {
   const { user } = useAuthStore()
   const [currentStep, setCurrentStep] = useState(1)
   const [showVNPay, setShowVNPay] = useState(false)
+  const [orderResult, setOrderResult] = useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const isOrderPlaced = React.useRef(false)
 
   const [formData, setFormData] = useState({
     fullName: user?.fullName || user?.name || '',
@@ -189,16 +233,18 @@ function Checkout() {
 
   // Redirect to cart when empty, but not when an order was just placed
   useEffect(() => {
-    if (items.length === 0 && !isOrderPlaced.current) {
+    if (items.length === 0 && !orderResult) {
       navigate('/cart')
     }
-  }, [items.length, navigate])
+  }, [items.length, orderResult, navigate])
 
-  if (items.length === 0 && !isOrderPlaced.current) {
-    return <div className="checkout-page empty"><div className="container" style={{padding: '50px', textAlign: 'center'}}>Đang chuyển hướng...</div></div>
-  } else if (items.length === 0 && isOrderPlaced.current) {
-    // Show a loading/success intermediate state instead of null which causes blank screen
-    return <div className="checkout-page"><div className="container" style={{padding: '50px', textAlign: 'center'}}>Đang chuyển hướng đến trang thành công...</div></div>
+  // Show success screen FIRST (orderResult takes priority over everything)
+  if (orderResult) {
+    return <OrderSuccess order={orderResult} />
+  }
+
+  if (items.length === 0) {
+    return null
   }
 
   const subtotal = getTotal()
@@ -258,11 +304,9 @@ function Checkout() {
         },
         paymentMethod: paymentMethodLabel,
       })
-      isOrderPlaced.current = true
-      // Natively Navigate first!
-      navigate('/order-success', { state: { order: res.data.data }, replace: true })
-      // Clear cart asynchronously so it doesn't interrupt the unmount process
-      setTimeout(() => clearCart(), 100)
+      setOrderResult(res.data.data)
+      clearCart()
+      navigate('/order-success', { state: { order: res.data.data } })
     } catch (err) {
       alert('Lỗi tạo đơn hàng: ' + (err.response?.data?.message || err.message))
     } finally {
