@@ -215,7 +215,7 @@ router.post('/:id/return', async (req, res) => {
 // @route   GET /api/orders
 // @desc    Get all orders (UC-11)
 // @access  Private/Admin
-router.get('/', authorize('admin'), async (req, res) => {
+router.get('/', authorize('admin', 'owner'), async (req, res) => {
   try {
     const orders = await Order.find({}).populate('user', 'name email').sort({ createdAt: -1 });
     res.json({ success: true, count: orders.length, data: orders });
@@ -227,7 +227,7 @@ router.get('/', authorize('admin'), async (req, res) => {
 // @route   PUT /api/orders/:id/status
 // @desc    Update order status and confirm (UC-11)
 // @access  Private/Admin
-router.put('/:id/status', authorize('admin'), async (req, res) => {
+router.put('/:id/status', authorize('admin', 'owner'), async (req, res) => {
   try {
     const { status } = req.body;
     const order = await Order.findById(req.params.id).populate('user', 'name email');

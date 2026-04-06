@@ -39,7 +39,7 @@ router.put('/profile', protect, async (req, res) => {
 // @route   GET /api/users
 // @desc    Get all users (UC-10 Mgmt)
 // @access  Private/Admin
-router.get('/', protect, authorize('admin'), async (req, res) => {
+router.get('/', protect, authorize('admin', 'owner'), async (req, res) => {
   try {
     const users = await User.find({});
     res.json({ success: true, count: users.length, data: users });
@@ -51,7 +51,7 @@ router.get('/', protect, authorize('admin'), async (req, res) => {
 // @route   PUT /api/users/:id/block
 // @desc    Block or Unblock a user
 // @access  Private/Admin
-router.put('/:id/block', protect, authorize('admin'), async (req, res) => {
+router.put('/:id/block', protect, authorize('admin', 'owner'), async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ success: false, message: 'User not found' });

@@ -7,7 +7,7 @@ const router = express.Router();
 // @route   GET /api/reports/sales
 // @desc    Get sales analytics grouped by month (UC-12)
 // @access  Private/Admin
-router.get('/sales', protect, authorize('admin'), async (req, res) => {
+router.get('/sales', protect, authorize('admin', 'owner'), async (req, res) => {
   try {
     const salesData = await Order.aggregate([
       {

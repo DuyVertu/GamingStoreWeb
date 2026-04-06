@@ -91,7 +91,7 @@ router.get('/:id', async (req, res) => {
 // @route   POST /api/products
 // @desc    Create new product (Admin only)
 // @access  Private/Admin
-router.post('/', protect, authorize('admin'), async (req, res) => {
+router.post('/', protect, authorize('admin', 'owner'), async (req, res) => {
   try {
     const product = await Product.create(req.body);
     
@@ -110,7 +110,7 @@ router.post('/', protect, authorize('admin'), async (req, res) => {
 // @route   PUT /api/products/:id
 // @desc    Update product (Admin only)
 // @access  Private/Admin
-router.put('/:id', protect, authorize('admin'), async (req, res) => {
+router.put('/:id', protect, authorize('admin', 'owner'), async (req, res) => {
   try {
     const product = await Product.findByIdAndUpdate(
       req.params.id,
@@ -140,7 +140,7 @@ router.put('/:id', protect, authorize('admin'), async (req, res) => {
 // @route   DELETE /api/products/:id
 // @desc    Delete product (Admin only)
 // @access  Private/Admin
-router.delete('/:id', protect, authorize('admin'), async (req, res) => {
+router.delete('/:id', protect, authorize('admin', 'owner'), async (req, res) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
     

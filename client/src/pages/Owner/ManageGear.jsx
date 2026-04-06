@@ -128,7 +128,7 @@ function ManageGear() {
           />
         </div>
         <button className="btn btn-primary btn-sm" onClick={handleAdd}>
-          ➕ Thêm sản phẩm (Database thật)
+          ➕ Thêm sản phẩm
         </button>
       </div>
 
