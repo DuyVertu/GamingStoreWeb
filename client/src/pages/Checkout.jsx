@@ -187,12 +187,13 @@ function Checkout() {
 
   const [errors, setErrors] = useState({})
 
-  // Redirect to cart when empty, but not when an order was just placed
+  // Redirect to cart when empty on initial load
   useEffect(() => {
     if (items.length === 0 && !isOrderPlaced.current) {
       navigate('/cart')
     }
-  }, [items.length, navigate])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   if (items.length === 0 && !isOrderPlaced.current) {
     return <div className="checkout-page empty"><div className="container" style={{padding: '50px', textAlign: 'center'}}>Đang chuyển hướng...</div></div>
