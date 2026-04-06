@@ -194,8 +194,11 @@ function Checkout() {
     }
   }, [items.length, navigate])
 
-  if (items.length === 0) {
-    return null
+  if (items.length === 0 && !isOrderPlaced.current) {
+    return <div className="checkout-page empty"><div className="container" style={{padding: '50px', textAlign: 'center'}}>Đang chuyển hướng...</div></div>
+  } else if (items.length === 0 && isOrderPlaced.current) {
+    // Show a loading/success intermediate state instead of null which causes blank screen
+    return <div className="checkout-page"><div className="container" style={{padding: '50px', textAlign: 'center'}}>Đang chuyển hướng đến trang thành công...</div></div>
   }
 
   const subtotal = getTotal()
@@ -256,8 +259,10 @@ function Checkout() {
         paymentMethod: paymentMethodLabel,
       })
       isOrderPlaced.current = true
-      clearCart()
+      // Natively Navigate first!
       navigate('/order-success', { state: { order: res.data.data }, replace: true })
+      // Clear cart asynchronously so it doesn't interrupt the unmount process
+      setTimeout(() => clearCart(), 100)
     } catch (err) {
       alert('Lỗi tạo đơn hàng: ' + (err.response?.data?.message || err.message))
     } finally {
