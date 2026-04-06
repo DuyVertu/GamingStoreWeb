@@ -214,6 +214,8 @@ function Checkout() {
   const [orderResult, setOrderResult] = useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  const isOrderPlaced = React.useRef(false)
+
   const [formData, setFormData] = useState({
     fullName: user?.fullName || user?.name || '',
     email: user?.email || '',
@@ -233,7 +235,7 @@ function Checkout() {
 
   // Redirect to cart when empty, but not when an order was just placed
   useEffect(() => {
-    if (items.length === 0 && !orderResult) {
+    if (items.length === 0 && !orderResult && !isOrderPlaced.current) {
       navigate('/cart')
     }
   }, [items.length, orderResult, navigate])
@@ -304,9 +306,9 @@ function Checkout() {
         },
         paymentMethod: paymentMethodLabel,
       })
+      isOrderPlaced.current = true
       setOrderResult(res.data.data)
-      clearCart()
-      navigate('/order-success', { state: { order: res.data.data } })
+      setTimeout(() => clearCart(), 100)
     } catch (err) {
       alert('Lỗi tạo đơn hàng: ' + (err.response?.data?.message || err.message))
     } finally {
