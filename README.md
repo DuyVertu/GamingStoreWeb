@@ -152,4 +152,4 @@ GamingStoreWeb/
 
 ---
 
-**DuyVertu - Báo Cáo Đồ Án / Đề Tài TLCN 2024**
+**DuyVertu - Báo Cáo Đồ Án / Đề Tài TLCN 2026**
